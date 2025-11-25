@@ -7,6 +7,7 @@ export interface IEvent extends Document {
   description: string;
   images: string[];
   bookingAvailable: boolean;
+  ticketPrice?: number;
 }
 
 const EventSchema = new Schema<IEvent>(

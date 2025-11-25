@@ -7,6 +7,7 @@ export interface IDigitalArchive extends Document {
   description: string;
   category: string;
   language: string;
+  images: string[];
 }
 
 const DigitalArchiveSchema = new Schema<IDigitalArchive>(
@@ -14,6 +15,7 @@ const DigitalArchiveSchema = new Schema<IDigitalArchive>(
     monasteryId: { type: Schema.Types.ObjectId, ref: "Monastery" },
     type: String,
     fileUrl: String,
+    images: [String],
     description: String,
     category: String,
     language: String,
