@@ -7,6 +7,11 @@ export interface IMonastery extends Document {
     lat: number;
     lng: number;
   };
+  villageOrTown?: string;
+  state?: string;
+  googleMapsLink?: string;
+  altitude?: string;
+  buddhistSect?: string;
   district: string;
   images: string[];
   history: string;
@@ -28,6 +33,11 @@ const MonasterySchema = new Schema<IMonastery>(
     history: String,
     architecture: String,
     foundedYear: Number,
+    villageOrTown: String, // Add this
+    state: String, // Add this
+    googleMapsLink: String, // Add this
+    altitude: String, // Add this
+    buddhistSect: String,
     nearbyAttractions: [String],
   },
   { timestamps: true }
