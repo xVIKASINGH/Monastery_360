@@ -1,28 +1,22 @@
-import { NextResponse,NextRequest } from 'next/server';
-import { monastries } from '@/data/monaastries';
-// export async function GET(req : NextRequest, { params } : {params : {id :string}}) {
-    
-//   const id = Number(params.id);
-//   console.log(id);
-  
-//   const monastery = monastries.find(m => m.id === id);
+import Monastery from "@/models/monasteriesModel";
+import { NextResponse, NextRequest } from "next/server";
+import dbConnect from "@/lib/dbConnnect";
 
-//   if (!monastery) {
-//     return new NextResponse('Monastery not found', { status: 404 });
-//   }
-//   return NextResponse.json(monastery);
-// }
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  const params = await context.params;  // await here!
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const params = await context.params;
+    await dbConnect();
+    console.log(params.id);
 
-  const id = Number(params.id);
-  const monastery = monastries.find(m => m.id === id);
+    const monastery = await Monastery.findById(params.id);
 
-  if (!monastery) {
-    return new NextResponse('Monastery not found', { status: 404 });
+    if (!monastery) {
+      return new NextResponse("Monastery not found", { status: 404 });
+    }
+
+    return NextResponse.json(monastery);
+  } catch (error) {
+    console.error("Error fetching monastery:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
-  return NextResponse.json(monastery);
 }

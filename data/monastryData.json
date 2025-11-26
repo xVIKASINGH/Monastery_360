@@ -1,7 +1,6 @@
 {
   "monastries": [
     {
-      "id" : 1,
       "name": "Dubdi Monastery",
       "description": "Dubdi Monastery, also known as the Yuksom Monastery, holds the distinction of being considered the oldest monastery in Sikkim. Its name literally means 'The Hermit's Cell' or 'The Retreat,' reflecting its highly secluded and contemplative location atop a forested hill near Yuksom. It is a historical powerhouse, established in 1701 A.D. by Chogyal Phuntshog Namgyal in veneration of the patron saint Lhatsun Chempo. Its founding marks the formal beginning of the Buddhist ecclesiastical establishment in Sikkim.\n\nThe monastery is accessed via a scenic but steep hike of about an hour from Yuksom village. This location, deep within the forest, contributes to its ancient, undisturbed atmosphere. The two-storied stone structure is relatively modest in size compared to modern complexes, but its architecture is an excellent example of the traditional early Sikkimese style, with a unique bell-shaped dome on top.\n\nInside, the monastery is rich with images of various divinities, saints, and a collection of rare manuscripts and ritualistic texts. The courtyard is particularly significant as it features the statues of the Three Lamas (Lhatsun Chempo, Ngadak Sempa Chempo, and Kathog Lama), who together consecrated the first Chogyal of Sikkim at Yuksom in 1642. Dubdi remains a site of immense spiritual and historical importance, serving as a powerful link to the origins of the Sikkimese kingdom.",
       "location": {
@@ -35,7 +34,6 @@
       ]
     },
     {
-      "id" : 2,
       "name": "Enchey Monastery",
       "description": "The Enchey Monastery is a strategically important monastery located about 3 km northeast of Gangtok. It is revered for being part of the oldest and most important monasteries of the Nyingma order in Sikkim. The name 'Enchey' means 'the solitary temple', as it was believed to be blessed by Lama Druptob Karpo, a renowned exorcist, who flew from Maenam Hill and built a small hermitage here in the 1840s.\n\nThe original small structure was reconstructed into the magnificent monastery seen today in 1909 during the reign of Sikyong Tulku, the 10th Chogyal of Sikkim. The monastery is built in the beautiful Chinese Pagoda style and is housed in a very sacred location. It is believed that the presiding deities—Khangchendzonga and Yabdean and the protective deities—Gompa, Kancan Dzonga, and Purba Digchen Mo—reside in this monastery, offering protection to the entire region.\n\nThe main assembly hall features a stunning collection of images of gods, goddesses, and other religious artifacts. The inner sanctum houses a magnificent image of Lama Druptob Karpo. The walls are covered with vividly painted murals and frescoes depicting tantric forms of gods in dynamic postures. Enchey is particularly famous for its annual 'Cham' (masked dance) festival, held on the 18th and 19th days of the 12th lunar month, where monks perform sacred ritual dances to exorcise evil spirits and welcome the new year. Its proximity to Gangtok makes it highly accessible, serving as a peaceful refuge from the city hustle.",
       "location": {
@@ -68,7 +66,6 @@
       ]
     },
     {
-      "id" : 3,
       "name": "Gonjang Monastery",
       "description": "Gonjang Monastery is a relatively modern but significant monastery located near the famous Tashi View Point, just a short drive from Gangtok. It was established in 1981 A.D. by H.E. Tingkye Gonjang Rimpoche, and belongs to the Nyingma sect, maintaining a strong connection to the lineage of the 4th Gonjang Rimpoche. Despite its recent founding, it has quickly become a vital centre for the local Buddhist community and a popular stop for tourists visiting the Tashi View Point.\n\nThe monastery is beautifully constructed with vibrant colors and traditional Tibetan architectural elements. The main assembly hall is spacious and decorated with murals depicting scenes from Buddhist scriptures and the lives of past masters. It houses magnificent statues of Guru Padmasambhava, Lord Buddha, and other deities important to the Nyingma tradition. The monastery complex also includes accommodation for the young monks who reside there and receive traditional Buddhist education.\n\nOne of the greatest appeals of Gonjang Monastery is its elevated location, which offers panoramic, breathtaking views of the surrounding Himalayan peaks, including Mount Khangchendzonga, especially during sunrise and sunset. The peaceful environment provides an excellent setting for meditation and spiritual contemplation. The monastery regularly hosts prayer sessions and religious ceremonies, which visitors are often welcome to observe. Its accessibility and scenic setting make it an essential addition to any spiritual or cultural itinerary in East Sikkim.",
       "location": {
@@ -101,7 +98,6 @@
       ]
     },
     {
-      "id" : 4,
       "name": "Kewzing Monastery",
       "description": "Kewzing Monastery, located in the quiet, scenic Kewzing village in South Sikkim, is a charming and historically significant monastery belonging to the Nyingma sect of Buddhism. It was established in 1888 A.D. and stands as a testament to the strong Buddhist traditions maintained by the local Lepcha and Bhutia communities in the area. The name 'Kewzing' itself is derived from the local Lepcha dialect, meaning 'land of the wheat field.'\n\nThe monastery complex features traditional Sikkimese and Tibetan architecture, characterized by a sloping roof, intricate woodwork, and a main assembly hall (Lhakhang) adorned with vibrant frescoes and religious iconography. Inside the Lhakhang, visitors can observe ancient Thangkas and statues of the principal deities revered in the Nyingma tradition, including Guru Padmasambhava.\n\nKewzing Monastery is renowned for its tranquil atmosphere and its role as a key spiritual hub for the surrounding villages. It is less frequented by mass tourism, offering a more authentic and immersive experience into the monastic way of life. The monastery hosts an annual Chaam (masked dance) festival, usually held in December, which is a major event for the local community, attracting devotees to witness the monks' elaborate ritual performances aimed at warding off evil spirits and bringing peace. Its location, nestled amidst terraced fields and with clear views of the valley, makes it a beautiful example of Sikkim's spiritual and natural heritage.",
       "location": {
@@ -134,7 +130,6 @@
       ]
     },
     {
-      "id" : 5,
       "name": "Labrang Monastery",
       "description": "Labrang Monastery is a significant religious site located near Phodong, just a short distance from the North Sikkim Highway. Established in 1814 A.D., it belongs to the Nyingma sect, setting it apart from its near neighbor, the Phodong Monastery, which is of the Kagyu sect. This co-existence of major Nyingma and Kagyu monasteries in close proximity highlights the religious tolerance and historical complexity of the region.\n\nThe monastery was built by the eighth Chogyal of Sikkim, Tsugphud Namgyal, in memory of his tutor, Lama Jamyang Tashi. Historically, Labrang Monastery was also the site where the coronation of the eleventh Chogyal of Sikkim, Tashi Namgyal, took place in 1914.\n\nThe architecture is a classic example of Tibetan monastic design, featuring intricate wood carvings, elaborate murals, and beautifully painted frescoes within its assembly hall. The peaceful atmosphere is enhanced by its location amidst quiet hills and forest cover, making it a perfect place for contemplation and spiritual retreats. Although smaller than some of the major monasteries in Sikkim, Labrang remains a crucial link in the Nyingma religious network, maintaining a dedicated community of monks and preserving numerous historical scriptures and artifacts.",
       "location": {
@@ -167,7 +162,6 @@
       ]
     },
     {
-      "id" :6,
       "name": "Phodong Monastery",
       "description": "Phodong Monastery is one of the six most important monasteries in Sikkim, historically significant for its proximity to the former capital, Tumlong. It is a major monastery of the Kagyu sect, established by Chogyal Gyurmed Namgyal in 1740 A.D. The original structure remains an important religious landmark, with the main complex rebuilt in the early 20th century to accommodate a growing community.\n\nRenowned for splendid murals, exquisite frescoes, and ancient wall paintings, Phodong houses over 260 monks and serves as a major center for Buddhist learning in North Sikkim. It hosts the annual Kagyed Chaam masked dance festival in December, featuring monks in silk costumes and masks performing ritual dances symbolizing the destruction of evil forces and welcoming prosperity. The monastery's peaceful surroundings amid green hills make it a tranquil location for visitors.",
       "location": {
@@ -201,7 +195,6 @@
       ]
     },
     {
-      "id" : 7,
       "name": "Rinchenpong Monastery",
       "description": "Rinchenpong Monastery is a historic and serene monastery located near the village of Rinchenpong in West Sikkim, offering stunning views of the Khangchendzonga range. Founded in 1730 A.D., it belongs to the Kagyu order of Tibetan Buddhism. The monastery is relatively small but holds significant historical importance due to its connection with the early spread of Buddhism in the region.\n\nIt is famously known for its sacred statue of Lord Buddha and its association with a local legend involving the British. According to the legend, local forces used poisonous water near the British camp during the Anglo-Sikkimese War to prevent their advance. The site is peaceful, surrounded by dense forests including the unique Poison Oak tree, a local attraction.\n\nThe monastery hosts an annual festival with traditional Chaam masked dances performed by the monks. Visitors appreciate the religious artifacts, tranquility, and spectacular natural scenery. Its elevated position provides one of the best views of the surrounding mountain peaks and valleys in West Sikkim.",
       "location": {
@@ -233,7 +226,6 @@
       ]
     },
     {
-      "id" : 8,
       "name": "Rumtek Monastery",
       "description": "Rumtek Monastery, officially the Dharma Chakra Centre, is the largest and most important monastery in Sikkim. Located 24 km from Gangtok on a ridge overlooking the valley, it serves as the main seat-in-exile of the Gyalwa Karmapa, head of the 900-year-old Karma Kagyu lineage.\n\nOriginally founded in 1734 by the 9th Karmapa, the monastery fell into ruin until the 1960s when the 16th Karmapa built the current complex after fleeing Tibet. It is a replica of the Tsurphu Monastery in Tibet and includes the main temple, monks' quarters, a retreat center, and the Karma Shri Nalanda Institute for Higher Buddhist Studies.\n\nThe main shrine is a three-story structure adorned with murals, thangkas, and ancient manuscripts. The Golden Stupa contains relics of the 16th Karmapa. Pilgrims and tourists visit for its spiritual importance, serene environment, and stunning views. Prayer flags and wheels line the walkways, creating a contemplative mood.",
       "location": {
@@ -267,7 +259,6 @@
       ]
     },
     {
-      "id" : 9,
       "name": "Sangachoeling Monastery",
       "description": "Sangachoeling Monastery, also spelled Sange Choeling, is considered the second oldest monastery in Sikkim, founded in 1697 A.D. The name means \"Island of the Guhyamantra teachings\" or \"Place of Secret Spells,\" referring to Vajrayana Buddhism. Established by Lama Lhatsun Chempo, who also founded Pemayangtse Monastery, it is located near Pelling. The monastery requires a scenic uphill hike through forest, culminating in a tranquil site with panoramic views of the Himalayan ranges including Mount Kanchenjunga.\n\nDespite multiple reconstructions due to fire, Sangachoeling preserves unique 17th-century clay statues and tantric relics. The monastery belongs to the Nyingma sect and has historically been restricted to male monks from Bhutia and Lepcha communities. It remains a vital pilgrimage site known for its spiritual atmosphere and connection to early Buddhist history in Sikkim.",
       "location": {
@@ -304,7 +295,6 @@
       ]
     },
     {
-      "id" : 10,
       "name": "Tashiding Monastery",
       "description": "Tashiding Monastery, known as 'The Devoted Central Glory,' is considered the most sacred monastery in Sikkim and is revered as the 'Heart of Sikkim.' Located atop a heart-shaped hill at the confluence of the Rathong and Rangit rivers, it is sanctified by Guru Padmasambhava who blessed the site in the 8th century. Founded in 1641 A.D. by Ngadak Sempa Chempo, one of the three lamas who consecrated Sikkim's first Chogyal, Tashiding is a key monastery of the Nyingma order.\n\nThe monastery complex includes numerous stupas and chortens, with the famous Thongwa Rangdrol chorten believed to cleanse sins by mere sight. The annual Bum Chu festival, involving the opening of a sacred vase of holy water blessed by Guru Padmasambhava, draws thousands of pilgrims and marks Tashiding as a vital religious site.",
       "location": {

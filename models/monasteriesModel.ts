@@ -42,7 +42,8 @@ const MonasterySchema = new Schema<IMonastery>(
     buddhistSect: String,
     nearbyAttractions: [String],
   },
-  { timestamps: true }
+  { timestamps: true 
+  }
 );
 
 export default mongoose.models.Monastery ||
