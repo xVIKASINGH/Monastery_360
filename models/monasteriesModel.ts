@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IMonastery extends Document {
+  id : number,
   name: string;
   description: string;
   location: {
@@ -22,6 +23,7 @@ export interface IMonastery extends Document {
 
 const MonasterySchema = new Schema<IMonastery>(
   {
+    id : Number,
     name: { type: String, required: true },
     description: String,
     location: {
