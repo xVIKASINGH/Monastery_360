@@ -9,7 +9,7 @@ export interface IHotel extends Document {
   rating?: number;
   available: boolean;
   owner: mongoose.Schema.Types.ObjectId;
-
+  closestMonastery?: string;
   // new fields
   location: {
     type: "Point";
@@ -28,7 +28,9 @@ const HotelSchema = new Schema<IHotel>(
     rating: Number,
     available: { type: Boolean, default: true },
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
+    closestMonastery: {
+        type: String,
+    },
     // 🌍 GeoJSON location
     location: {
       type: {
