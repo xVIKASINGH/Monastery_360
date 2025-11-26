@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IBooking extends Document {
-  user: mongoose.Types.ObjectId; // or string
-  monastery: mongoose.Types.ObjectId; // or string
+  user: mongoose.Types.ObjectId;
+  event: mongoose.Types.ObjectId; 
   date: Date;
   numberOfPeople: number;
   ticketPrice: number;
@@ -14,22 +14,26 @@ const BookingSchema = new Schema<IBooking>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
-  monastery: {
+
+  event: {
     type: Schema.Types.ObjectId,
-    ref: "Monastery",
-    required: true
+    ref: "Event", // ← changed from Monastery
+    required: true,
   },
+
   date: { type: Date, required: true },
   numberOfPeople: { type: Number, required: true },
   ticketPrice: { type: Number, required: true },
   totalAmount: { type: Number, required: true },
+
   paymentStatus: {
     type: String,
     enum: ["pending", "success", "failed"],
-    default: "pending"
-  }
+    default: "pending",
+  },
 });
 
-export default mongoose.model<IBooking>("Booking", BookingSchema);
+export default mongoose.models.Booking ||
+  mongoose.model<IBooking>("Booking", BookingSchema);
