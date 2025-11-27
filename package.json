@@ -13,6 +13,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@react-google-maps/api": "^2.20.7",
     "@types/dotenv": "^6.1.1",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.8.0",

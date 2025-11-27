@@ -7,7 +7,6 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
     const params = await context.params;
     await dbConnect();
     console.log(params.id);
-
     const monastery = await Monastery.findById(params.id);
 
     if (!monastery) {
