@@ -13,7 +13,7 @@ const UserSchema: Schema<IUser> = new Schema(
   {
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: false },
     type: { type: String, enum: ["user", "hotelier", "monasteryAdmin"], default: "user" },
       savedMonasteries: [
       { type: Schema.Types.ObjectId, ref: "Monastery" },
