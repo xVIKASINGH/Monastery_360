@@ -10,7 +10,6 @@ export async function GET() {
 
     // Only select id & name
     const monasteries = await monasteriesModel.find({}, "_id name");
-    console.log("Fetched monasteries:", monasteries.length);
     return NextResponse.json(
       {
         success: true,

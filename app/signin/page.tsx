@@ -5,12 +5,13 @@ import { X, Mail, Lock, User, Phone, Building2, Church } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-type AccountType = "personal" | "hotelier" | "monasteryAdmin";
+type AccountType = "user" | "hotelier" | "monasteryAdmin";
 type AuthMode = "login" | "signup";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  backgroundImagePath?: string;
 }
 
 interface LoginFormData {
@@ -24,10 +25,10 @@ interface SignupFormData extends LoginFormData {
   phone?: string;
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalProps) {
   const router = useRouter();
   const [authMode, setAuthMode] = useState<AuthMode>("login");
-  const [accountType, setAccountType] = useState<AccountType>("personal");
+  const [accountType, setAccountType] = useState<AccountType>("user");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,81 +117,72 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   };
 
-const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  setError(null);
+  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
-  const formData = {
-    username: signupName,
-    email: signupEmail,
-    password: signupPassword,
-    type: accountType, // "user" | "hotelier" | "monasteryAdmin"
+    const formData = {
+      username: signupName,
+      email: signupEmail,
+      password: signupPassword,
+      type: accountType,
+    };
+
+    if (!formData.username || !formData.email || !formData.password || !formData.type) {
+      setError("Please fill all required fields.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Signup failed.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const user = data.user;
+      console.log("Signup success:", user);
+
+      const loginResult = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+        accountType: formData.type,
+      });
+
+      if (loginResult?.error) {
+        setError("Account created but auto-login failed.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (user.type === "user") router.push("/dashboard/user");
+      else if (user.type === "hotelier") router.push("/dashboard/hotelier");
+      else if (user.type === "monasteryAdmin") router.push("/dashboard/monastery-admin");
+      else router.push("/");
+
+    } catch (err: unknown) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Signup failed.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  if (!formData.username || !formData.email || !formData.password || !formData.type) {
-    setError("Please fill all required fields.");
-    setIsSubmitting(false);
-    return;
-  }
-
-  try {
-    // ---------------------------
-    // 1️⃣ Create account (API)
-    // ---------------------------
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.message || "Signup failed.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Created user
-    const user = data.user;
-    console.log("Signup success:", user);
-
-    // ---------------------------
-    // 2️⃣ Auto-login using NextAuth
-    // ---------------------------
-    const loginResult = await signIn("credentials", {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-      accountType: formData.type,
-    });
-
-    if (loginResult?.error) {
-      setError("Account created but auto-login failed.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (user.type === "user") router.push("/dashboard/user");
-    else if (user.type === "hotelier") router.push("/dashboard/hotelier");
-    else if (user.type === "monasteryAdmin") router.push("/dashboard/monastery-admin");
-    else router.push("/"); 
-
-  } catch (err: unknown) {
-    console.error(err);
-    setError(err instanceof Error ? err.message : "Signup failed.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
 
   const getAccountTypeLabel = (type: AccountType): string => {
     switch (type) {
-      case "personal":
-        return "PERSONAL ACCOUNT";
+      case "user":
+        return "USER ACCOUNT";
       case "hotelier":
         return "HOTELIER ACCOUNT";
       case "monasteryAdmin":
@@ -202,7 +194,7 @@ const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
 
   const getAccountTypeIcon = (type: AccountType) => {
     switch (type) {
-      case "personal":
+      case "user":
         return <User className="w-5 h-5" />;
       case "hotelier":
         return <Building2 className="w-5 h-5" />;
@@ -215,7 +207,7 @@ const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-1000 p-4 font-inter"
+      className="fixed inset-0 flex items-center justify-center z-1000 p-4 font-inter"
       onClick={onClose}
     >
       <div
@@ -223,8 +215,11 @@ const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
         onClick={(e) => e.stopPropagation()}
       >
         
-        {/* Left Side - Promotional/Design */}
-        <div className="md:w-1/2 bg-gradient-to-br from-orange-400 via-pink-500 to-purple-600 p-8 flex flex-col items-center justify-center text-white relative">
+        {/* Left Side - Background Image */}
+        <div 
+          className="md:w-1/2 p-8 flex flex-col items-center justify-center relative bg-cover bg-center"
+          style={{ backgroundImage: backgroundImagePath ? `url(${backgroundImagePath})` : undefined }}
+        >
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition"
@@ -232,31 +227,13 @@ const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
           >
             <X className="w-6 h-6" />
           </button>
-          
-          <div className="text-center space-y-4">
-            <div className="text-6xl font-bold mb-4 animate-pulse">
-              🕉️
-            </div>
-            <h2 className="text-4xl font-extrabold tracking-tight">TRAVEL KA</h2>
-            <h3 className="text-3xl font-bold tracking-wide">MUTHYALA</h3>
-            <div className="bg-red-600 text-white px-4 py-2 rounded-xl text-xl font-extrabold inline-block transform -rotate-6 shadow-lg">
-              MEGA SALE
-            </div>
-            
-            <div className="mt-8 space-y-2">
-              <p className="text-sm font-light uppercase tracking-widest">--- LIVE NOW ---</p>
-              <p className="text-2xl font-bold">The Year&apos;s Biggest Deals</p>
-              <p className="text-sm font-light">on Spiritual Tours, Monasteries & Premier Hotels.</p>
-              <p className="text-xs mt-4 opacity-70">*T&C Apply</p>
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Form */}
         <div className="md:w-1/2 p-8 overflow-y-auto">
           {/* Account Type Tabs */}
           <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl shadow-inner">
-            {(["personal", "hotelier", "monasteryAdmin"] as AccountType[]).map((type) => (
+            {(["user", "hotelier", "monasteryAdmin"] as const).map((type) => (
               <button
                 key={type}
                 onClick={() => { setAccountType(type); setError(null); }}
@@ -268,8 +245,8 @@ const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
                 } disabled:opacity-70`}
               >
                 {getAccountTypeIcon(type)}
-                <span className="hidden sm:inline">{type === "personal" ? "Traveler" : type.charAt(0).toUpperCase() + type.slice(1)}</span>
-                <span className="sm:hidden">{type === "personal" ? "Traveler" : type.charAt(0).toUpperCase()}</span>
+                <span className="hidden sm:inline">{type === "user" ? "Traveler" : type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                <span className="sm:hidden">{type === "user" ? "Traveler" : type.charAt(0).toUpperCase()}</span>
               </button>
             ))}
           </div>

@@ -19,7 +19,7 @@ export interface IEvent extends Document {
 const EventSchema = new Schema<IEvent>(
   {
     monasteryId: { type: Schema.Types.ObjectId, ref: "Monastery" },
-       eventName: String,
+    eventName: String,
     startDate: String,
     endDate: String,
     time: String,

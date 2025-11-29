@@ -38,6 +38,48 @@ const Monastery360 = () => {
     { name: "Dubdi Monastery", location: "Yuksom" },
   ];
 
+  // Function to get role-based dashboard route
+  const getDashboardRoute = (role: string | undefined) => {
+    switch (role?.toLowerCase()) {
+      case "hotelier":
+        return "/hotel-admin";
+      case "monasteryadmin":
+        return "/monastery-admin";
+      case "user":
+      default:
+        return "/userprofile";
+    }
+  };
+
+  // Function to generate avatar from initials
+  const getInitials = (name: string | undefined) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Function to generate a consistent color based on name
+  const getAvatarColor = (name: string | undefined) => {
+    const colors = [
+      "bg-blue-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-green-500",
+      "bg-orange-500",
+      "bg-red-500",
+      "bg-indigo-500",
+      "bg-cyan-500",
+    ];
+    const hash = (name || "").split("").reduce((acc, char) => {
+      return acc + char.charCodeAt(0);
+    }, 0);
+    return colors[hash % colors.length];
+  };
+
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
@@ -76,6 +118,11 @@ const Monastery360 = () => {
   };
 
   const currentMonastery = monasteries[currentVideo];
+  const userRole = session?.user?.role || "user";
+  const userName = session?.user?.name || "User";
+  const userImage = session?.user?.image;
+  const initials = getInitials(userName);
+  const avatarColor = getAvatarColor(userName);
 
   return (
     <div className="w-full min-h-screen bg-black text-white overflow-x-hidden">
@@ -84,6 +131,7 @@ const Monastery360 = () => {
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
+          backgroundImagePath="/images/sikkimHe.avif" 
         />
       )}
 
@@ -124,48 +172,58 @@ const Monastery360 = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <a  onClick={() => router.push("/art-gallery")} className="hover:text-yellow-400 transition">
+              <a onClick={() => router.push("/art-gallery")} className="hover:text-yellow-400 transition cursor-pointer">
                Art Gallery
               </a>
-              <a  onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition">
+              <a onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition cursor-pointer">
                 Explore Monastries
               </a>
-              <a  onClick={() => router.push("/ai-planner")} className="hover:text-yellow-400 transition">
+              <a onClick={() => router.push("/ai-planner")} className="hover:text-yellow-400 transition cursor-pointer">
                 Plan Your Trip By Ai
               </a>
-              <a  onClick={() => router.push("/plan")} className="hover:text-yellow-400 transition">
+              <a onClick={() => router.push("/plan")} className="hover:text-yellow-400 transition cursor-pointer">
                 Spiritual
               </a>
 
               {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
               {session?.user ? (
                 <div className="relative">
-                  <img
-                    src={session.user.image || "/default-avatar.png"}
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400"
-                    onClick={() => setShowDropdown((p) => !p)}
-                  />
+                  {/* Avatar with image or initials */}
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400"
+                      onClick={() => setShowDropdown((p) => !p)}
+                    />
+                  ) : (
+                    <div
+                      className={`w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400 flex items-center justify-center font-semibold text-white ${avatarColor}`}
+                      onClick={() => setShowDropdown((p) => !p)}
+                    >
+                      {initials}
+                    </div>
+                  )}
 
                   {showDropdown && (
                     <div className="absolute right-0 mt-3 w-48 bg-white text-black rounded-xl shadow-xl py-3 z-50">
                       <div className="px-4 py-2 font-semibold border-b">
-                        {session.user.name}
+                        {userName}
                       </div>
 
+                  
+
                       <button
-                        onClick={() => router.push("/dashboard")}
+                        onClick={() => {
+                          router.push(getDashboardRoute(userRole));
+                          setShowDropdown(false);
+                        }}
                         className="w-full text-left px-4 py-2 hover:bg-gray-100"
                       >
                         Dashboard
                       </button>
 
-                      <button
-                        onClick={() => router.push("/saved")}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                      >
-                        Saved Monasteries
-                      </button>
+                    
 
                       <button
                         onClick={() => signOut()}

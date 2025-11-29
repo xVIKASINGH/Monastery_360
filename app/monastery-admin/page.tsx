@@ -280,6 +280,22 @@ const MonasteryEventDashboard = () => {
         </div>
     );
   }
+  if (!userSession || userSession.user?.role !== "monasteryAdmin") {
+  return (
+    <div className="flex flex-col h-screen items-center justify-center bg-gray-50 p-8">
+      <h1 className="text-3xl font-bold text-red-600 mb-4">Access Denied</h1>
+      <p className="text-gray-600 mb-6">
+        You must be a Monastery Admin to view this page.
+      </p>
+      <button
+        onClick={() => router.push("/")}
+        className="bg-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600 transition"
+      >
+        Go to Home
+      </button>
+    </div>
+  );
+}
 
   if (!userSession) {
     return (

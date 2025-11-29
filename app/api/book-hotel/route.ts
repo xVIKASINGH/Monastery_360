@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 import dbConnect from "@/lib/dbConnnect";
 import hotelsModel from "@/models/hotelsModel";
 import { uploadToCloudinary } from "@/lib/uploadCloudinary";
@@ -7,6 +9,16 @@ export async function POST(req: Request) {
   try {
     await dbConnect();
 
+    // Get the authenticated user
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    const owner = session.user.id; // <-- get owner from auth
+
     const form = await req.formData();
 
     const name = form.get("name") as string;
@@ -14,7 +26,6 @@ export async function POST(req: Request) {
     const address = form.get("address") as string;
     const pricePerNight = Number(form.get("pricePerNight"));
     const rating = Number(form.get("rating"));
-    const owner = form.get("owner") as string;
     const closestMonastery = form.get("closestMonastery") as string;
 
     // Location fields
@@ -25,7 +36,7 @@ export async function POST(req: Request) {
     // Multiple images
     const images = form.getAll("images") as File[];
 
-    if (!name || !address || !pricePerNight || !owner) {
+    if (!name || !address || !pricePerNight) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -40,10 +51,7 @@ export async function POST(req: Request) {
       const base64 = Buffer.from(bytes).toString("base64");
       const imgUri = `data:${img.type};base64,${base64}`;
 
-      const uploadRes = await uploadToCloudinary(
-        imgUri,
-        "hotel-images"
-      );
+      const uploadRes = await uploadToCloudinary(imgUri, "hotel-images");
 
       if (uploadRes.success && uploadRes.url) {
         uploadedImages.push(uploadRes.url);
@@ -57,7 +65,7 @@ export async function POST(req: Request) {
       address,
       pricePerNight,
       rating,
-      owner,
+      owner, // <-- now from session
       closestMonastery,
       images: uploadedImages,
       location: {
@@ -66,12 +74,13 @@ export async function POST(req: Request) {
       },
       googleMapsEmbedUrl,
     });
-    console.log("Hotel created:", hotel)
+
+    console.log("Hotel created:", hotel);
     return NextResponse.json({ success: true, hotel });
   } catch (err: unknown) {
     let message = "Unknown error";
     if (err instanceof Error) message = err.message;
-
+    console.log("error occurred", err);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
