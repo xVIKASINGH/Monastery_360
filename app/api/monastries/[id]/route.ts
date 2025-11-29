@@ -5,6 +5,7 @@ import dbConnect from "@/lib/dbConnnect";
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
+    console.log("Fetching monastery with ID:", params.id);
     await dbConnect();
     console.log(params.id);
     const monastery = await Monastery.findById(params.id);

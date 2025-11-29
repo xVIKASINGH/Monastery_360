@@ -40,16 +40,12 @@ declare module "next-auth/jwt" {
 --------------------------------------------------------- */
 export const authOptions: NextAuthOptions = {
   providers: [
-    /* ---------------------------------------------------------
-       GOOGLE PROVIDER — FIXED with profile()
-    --------------------------------------------------------- */
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       profile(profile) {
-        console.log("🌐 GOOGLE PROFILE:", profile);
         return {
-          id: profile.sub,
+          id: profile.sub, // temporary — replaced later with DB _id
           name: profile.name,
           email: profile.email,
           image: profile.picture,
@@ -57,9 +53,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
-    /* ---------------------------------------------------------
-       CREDENTIALS PROVIDER
-    --------------------------------------------------------- */
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -68,23 +61,16 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        console.log("📩 [CREDENTIALS] authorize:", credentials);
-
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing email or password");
         }
 
         await dbConnect();
-        console.log("🔗 Connected to DB");
 
         const user = await User.findOne({ email: credentials.email });
-        console.log("🔍 User found:", user);
-
         if (!user) throw new Error("User not found");
 
         const isMatch = await bcrypt.compare(credentials.password, user.password);
-        console.log("🔐 Password match:", isMatch);
-
         if (!isMatch) throw new Error("Invalid password");
 
         return {
@@ -105,70 +91,64 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
 
-  /* ---------------------------------------------------------
-     CALLBACKS
-  --------------------------------------------------------- */
   callbacks: {
-    /* ---------------------------------------------------------
-       signIn — Google user creation works HERE ONLY (in v5)
-    --------------------------------------------------------- */
+    /* ------------------------------------------------------------------
+       signIn — ONLY responsible to ensure Google user exists in DB
+    ------------------------------------------------------------------ */
     async signIn({ user, account }) {
-      console.log("\n================ SIGN-IN CALLBACK ================");
-      console.log("🔹 user:", user);
-      console.log("🔹 account:", account);
-
       if (account?.provider === "google") {
-        console.log("🌐 Handling Google sign-in...");
-
         await dbConnect();
 
         const existing = await User.findOne({ email: user.email });
-        console.log("🔍 Existing DB user:", existing);
 
         if (!existing) {
-          console.log("🆕 Creating new Google user in DB...");
-
-          const created = await User.create({
-            email: user.email,
-            username: user.name,
+          await User.create({
+            email: user.email!,
+            username: user.name!,
             password: "",
             type: "user",
           });
-
-          console.log("✅ Google user created:", created);
         }
       }
 
       return true;
     },
 
-    /* ---------------------------------------------------------
-       JWT CALLBACK — attaches data to token
-    --------------------------------------------------------- */
-    async jwt({ token, user }) {
-      console.log("\n================ JWT CALLBACK ================");
-      console.log("🔹 token at start:", token);
-      console.log("🔹 user:", user);
+    /* ------------------------------------------------------------------
+       JWT — attach MongoDB _id, NOT Google id
+    ------------------------------------------------------------------ */
+    async jwt({ token, user, account }) {
+      // When Google login happens:
+      if (account?.provider === "google") {
+        await dbConnect();
 
+        const dbUser = await User.findOne({ email: token.email });
+
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.role = dbUser.type;
+          token.name = dbUser.username;
+          token.email = dbUser.email;
+        }
+
+        return token;
+      }
+
+      // When credentials login happens:
       if (user) {
-        console.log("📦 Attaching user to token...");
         token.id = (user as any).id;
         token.role = (user as any).role ?? "user";
         token.email = (user as any).email;
         token.name = (user as any).name;
       }
 
-      console.log("🏁 token final:", token);
       return token;
     },
 
-    /* ---------------------------------------------------------
-       SESSION CALLBACK
-    --------------------------------------------------------- */
+    /* ------------------------------------------------------------------
+       Session mapping
+    ------------------------------------------------------------------ */
     async session({ session, token }) {
-      console.log("\n================ SESSION CALLBACK ================");
-      console.log("🔹 token:", token);
-
       if (session.user) {
         session.user.id = token.id!;
         session.user.role = token.role!;
@@ -176,17 +156,10 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name!;
       }
 
-      console.log("🏁 session final:", session);
       return session;
     },
 
-    /* ---------------------------------------------------------
-       REDIRECT CALLBACK
-    --------------------------------------------------------- */
     async redirect({ url, baseUrl }) {
-      console.log("\n================ REDIRECT CALLBACK ================");
-      console.log("➡ Redirecting to:", url);
-
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       return url;
     },

@@ -13,6 +13,8 @@ export interface IEvent extends Document {
   images?: string[];
   bookingAvailable: boolean;
   ticketPrice?: number;
+  totaltickets?: number;
+  bookedTickets: number;
 }
 const EventSchema = new Schema<IEvent>(
   {
@@ -25,9 +27,11 @@ const EventSchema = new Schema<IEvent>(
     location: String,
     description: String,
     highlights: String,
-    images: String,
+    images: [String],
     bookingAvailable: Boolean,
     ticketPrice: Number,
+    totaltickets: Number,
+    bookedTickets: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -7,6 +7,7 @@ export interface IUser extends Document {
   bookings: string[]; // booking history
   createdAt?: Date;
   updatedAt?: Date;
+   BookedEvents: string[];
   type:"user" | "hotelier" | "monasteryAdmin";
 }
 const UserSchema: Schema<IUser> = new Schema(
@@ -21,6 +22,9 @@ const UserSchema: Schema<IUser> = new Schema(
     bookings: [
       { type: Schema.Types.ObjectId, ref: "Booking" }, // <— add this
     ],
+    BookedEvents:[
+      { type: Schema.Types.ObjectId, ref: "Event" },
+    ]
 
   },
   {
