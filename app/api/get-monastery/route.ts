@@ -7,7 +7,6 @@ import monasteriesModel from "@/models/monasteriesModel";
 export async function GET() {
   try {
     await dbConnect();
-
     // Only select id & name
     const monasteries = await monasteriesModel.find({}, "_id name");
     return NextResponse.json(

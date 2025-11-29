@@ -5,7 +5,6 @@ export async function GET() {
   try {
     await dbConnect();
     const digitalarchive = await DigitalArchive.find();
-    console.log(digitalarchive);
     return NextResponse.json(digitalarchive,{status : 200})
     
   } catch (error) {
