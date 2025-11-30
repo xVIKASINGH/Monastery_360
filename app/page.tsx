@@ -212,16 +212,16 @@ const Monastery360 = () => {
               <a onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition cursor-pointer">
                 Explore Monastries
               </a>
-              <a  onClick={() => router.push("/ai-planner")} className="hover:text-yellow-400 transition">
+              <a  onClick={() => router.push("/ai-planner")} className="hover:text-yellow-400 transition  cursor-pointer">
                 Plan Your Trip
               </a>
-              <a  onClick={() => router.push("/historical-archives")} className="hover:text-yellow-400 transition">
+              <a  onClick={() => router.push("/historical-archives")} className="hover:text-yellow-400 transition  cursor-pointer">
                 Historical Archives
               </a>
-               <a  onClick={() => router.push("/events")} className="hover:text-yellow-400 transition">
+               <a  onClick={() => router.push("/events")} className="hover:text-yellow-400 transition  cursor-pointer">
                 Cultural events & festivals
               </a>
-              
+              <a   onClick={() => router.push("/sikkim-map")} className="hover:text-yellow-400 transition  cursor-pointer">Sikkim</a>
               {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
               {session?.user ? (
                 <div className="relative">
