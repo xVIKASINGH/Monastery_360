@@ -23,6 +23,7 @@ const Monastery360 = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // NEXTAUTH session
   const { data: session } = useSession();
@@ -92,6 +93,15 @@ const Monastery360 = () => {
         video.muted = isMuted;
       }
     });
+
+    // Play/pause audio based on mute state
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(() => {});
+      }
+    }
   }, [currentVideo, isMuted]);
 
   const handleVideoChange = (dir: "next" | "prev") => {
@@ -112,7 +122,19 @@ const Monastery360 = () => {
   const toggleMute = () => {
     setIsMuted((prev) => {
       const newState = !prev;
-      videoRefs.current.forEach((v) => v && (v.muted = newState));
+      videoRefs.current.forEach((v) => {
+        if (v) v.muted = newState;
+      });
+      
+      // Toggle audio
+      if (audioRef.current) {
+        if (newState) {
+          audioRef.current.pause();
+        } else {
+          audioRef.current.play().catch(() => {});
+        }
+      }
+      
       return newState;
     });
   };
@@ -135,6 +157,16 @@ const Monastery360 = () => {
         />
       )}
 
+      {/* Background Audio */}
+      <audio
+        ref={audioRef}
+        loop
+        muted={isMuted}
+        playsInline
+      >
+        <source src="/audio/landingpage_audiotape.mpeg" type="audio/mpeg" />
+      </audio>
+
       {/* Background Videos */}
       <div className="relative h-screen w-full overflow-hidden">
         {monasteries.map((monastery, index) => (
@@ -147,7 +179,9 @@ const Monastery360 = () => {
             }`}
           >
             <video
-              ref={(el) => (videoRefs.current[index] = el)}
+              ref={(el) => {
+                videoRefs.current[index] = el;
+              }}
               className="w-full h-full object-cover"
               loop
               muted={isMuted}

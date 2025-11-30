@@ -352,27 +352,20 @@ export default function MonasteryDetail() {
             locationText="sikkim"
           />
 
-          {/* Amenities */}
-          {/* <div className="mb-12 pb-8 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">What this place offers</h2>
-            <div className="grid grid-cols-2 gap-6">
-              {amenities.map((amenity, idx) => {
-                const icons: Record<string, React.ReactNode> = {
-                  'WiFi': <Wifi size={20} />,
-                  'Kitchen': <Utensils size={20} />,
-                  'Air Conditioning': <Wind size={20} />,
-                  'Heating': <Droplet size={20} />,
-                };
-                return (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="text-gray-900">{icons[amenity] || <div className="w-5 h-5 bg-gray-300 rounded" />}</div>
-                    <span className="text-gray-900">{amenity}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div> */}
-          {console.log(events)}
+
+{/* Historical Archives Redirect */}
+          <div className="mb-12 pb-8 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Historical Archives</h2>
+            <p className="text-gray-700 leading-relaxed text-base mb-6 ">
+              Discover the deep history, founding stories, and detailed documentation of the {monastery.name}.
+            </p>
+            <a 
+              href={`/historical-archives/monastery/${monastery._id}`}
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150"
+            >
+              View Full Archives 📜
+            </a>
+          </div>
           {/* Upcoming Events & Festivals */}
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upcoming Events & Festivals</h2>
@@ -421,6 +414,7 @@ export default function MonasteryDetail() {
             )}
           </div>
         </div>
+        
 
         {/* Booking Card */}
         <div className="col-span-1">
