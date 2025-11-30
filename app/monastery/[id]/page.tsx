@@ -1,12 +1,10 @@
 "use client"
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { MapPin, Calendar, Users, Heart, Share2, ChevronLeft, ChevronRight, Star, Loader2, Wifi, Utensils, Wind, Droplet } from 'lucide-react';
 import MonasteryAerialPage from '@/app/map-testing/page';
-
+import { useRouter } from 'next/navigation';
 type Location = string | { lat: number; long: number; address: string };
-
 interface IMonasteryEvent {
   _id: string;
   eventName: string;
@@ -26,7 +24,6 @@ interface IMonasteryEvent {
   totaltickets: number;
   bookedTickets: number;
 }
-
 interface IEvent {
   _id: string;
   monasteryId: string;
@@ -46,7 +43,6 @@ interface IEvent {
   createdAt: string;
   updatedAt: string;
 }
-
 interface IMonasteryData {
   _id: string;
   name: string;
@@ -72,7 +68,6 @@ interface IMonasteryData {
   amenities: string[] | null;
   events: IMonasteryEvent[] | null;
 }
-
 export default function MonasteryDetail() {
   const params = useParams();
   const monasteryId = (params?.id as string | null | undefined) ?? null;
@@ -119,64 +114,62 @@ export default function MonasteryDetail() {
     fetchMonastery();
   }, [monasteryId]);
 
- useEffect(() => {
-  if (!monasteryId) return;
+  useEffect(() => {
+    if (!monasteryId) return;
 
-  const fetchEvents = async () => {
-    setEventsLoading(true);
+    const fetchEvents = async () => {
+      setEventsLoading(true);
+
+      try {
+        const res = await fetch(`/api/events/event-by-monastries/${monasteryId}`);
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch events. Status: ${res.status}`);
+        }
+        const data = await res.json();
+        const eventsList: IEvent[] = data.events || [];
+        setEvents(eventsList);
+        if (eventsList.length > 0) {
+          setSelectedEventId(eventsList[0]._id);
+        }
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setEvents([]);
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [monasteryId]);
+  const handleLikeToggle = async () => {
+    const newLikedState = !liked;
+    setLiked(newLikedState); // optimistic UI
 
     try {
-      const res = await fetch(`/api/events/event-by-monastries/${monasteryId}`);
+      const res = await fetch("/api/liked-monastery", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          monasteryId,
+          liked: newLikedState,
+        }),
+      });
 
       if (!res.ok) {
-        throw new Error(`Failed to fetch events. Status: ${res.status}`);
+        throw new Error("Failed to update like status");
       }
 
-      const data = await res.json();
-      console.log("Here are the events of this monastery:", data);
-
-      const eventsList: IEvent[] = data.events || [];
-      setEvents(eventsList);
-      if (eventsList.length > 0) {
-        setSelectedEventId(eventsList[0]._id);
-      }
+      console.log("Like updated:", await res.json());
     } catch (err) {
-      console.error("Error fetching events:", err);
-      setEvents([]);
-    } finally {
-      setEventsLoading(false);
+      console.error("Error updating like:", err);
+      setLiked(!newLikedState); // revert UI on failure
     }
   };
 
-  fetchEvents();
-}, [monasteryId]);
-const handleLikeToggle = async () => {
-  const newLikedState = !liked;
-  setLiked(newLikedState); // optimistic UI
-
-  try {
-    const res = await fetch("/api/liked-monastery", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        monasteryId,
-        liked: newLikedState,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to update like status");
-    }
-
-    console.log("Like updated:", await res.json());
-  } catch (err) {
-    console.error("Error updating like:", err);
-    setLiked(!newLikedState); // revert UI on failure
-  }
-};
-
+  console.log(events);
 
 
   const getLocationString = (location: Location): string => {
@@ -215,7 +208,7 @@ const handleLikeToggle = async () => {
   const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % monastery.images.length);
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + monastery.images.length) % monastery.images.length);
   const selectedEvent = getSelectedEvent();
-
+  const router = useRouter();
   return (
     <div className="bg-white min-h-screen">
       {/* Navigation Header */}
@@ -285,9 +278,8 @@ const handleLikeToggle = async () => {
             <button
               key={idx}
               onClick={() => setCurrentImageIndex(idx)}
-              className={`w-20 h-20 overflow-hidden border-2 transition ${
-                idx === currentImageIndex ? "border-gray-900" : "border-gray-300"
-              } rounded-lg`}
+              className={`w-20 h-20 overflow-hidden border-2 transition ${idx === currentImageIndex ? "border-gray-900" : "border-gray-300"
+                } rounded-lg`}
             >
               <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
             </button>
@@ -361,7 +353,7 @@ const handleLikeToggle = async () => {
           />
 
           {/* Amenities */}
-          <div className="mb-12 pb-8 border-b border-gray-200">
+          {/* <div className="mb-12 pb-8 border-b border-gray-200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">What this place offers</h2>
             <div className="grid grid-cols-2 gap-6">
               {amenities.map((amenity, idx) => {
@@ -379,8 +371,8 @@ const handleLikeToggle = async () => {
                 );
               })}
             </div>
-          </div>
-
+          </div> */}
+          {console.log(events)}
           {/* Upcoming Events & Festivals */}
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upcoming Events & Festivals</h2>
@@ -391,9 +383,16 @@ const handleLikeToggle = async () => {
             ) : events.length > 0 ? (
               <div className="grid grid-cols-3 gap-4">
                 {events.map((event) => (
-                  <div key={event._id} className="rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition">
+                  <div key={event._id} className="rounded-lg cursor-pointer overflow-hidden border border-gray-200 hover:shadow-lg transition">
                     {event.images && event.images.length > 0 ? (
-                      <div className="w-full h-40 bg-gray-200 overflow-hidden">
+                      <div 
+                      // onClick={() => {
+                      //   console.log(event._id);
+                      //   console.log(event);
+                      //   return router.push(`/events`)
+                      // }} 
+                      onClick={() => router.push(`/events/${event._id}`)}
+                      className="w-full h-40 bg-gray-200 overflow-hidden">
                         <img
                           src={event.images[0]}
                           alt={event.eventName}
@@ -405,7 +404,9 @@ const handleLikeToggle = async () => {
                         <span className="text-gray-600 text-sm">No image available</span>
                       </div>
                     )}
-                    <div className="p-3">
+                    <div className="p-3"
+
+                    >
                       <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2">{event.eventName}</h3>
                       <div className="flex items-center gap-1 text-xs text-gray-600">
                         <Calendar size={14} />
@@ -436,11 +437,10 @@ const handleLikeToggle = async () => {
                     <button
                       key={event._id}
                       onClick={() => setSelectedEventId(event._id)}
-                      className={`w-full text-left p-3 rounded-lg border-2 transition ${
-                        selectedEventId === event._id
+                      className={`w-full text-left p-3 rounded-lg border-2 transition ${selectedEventId === event._id
                           ? 'border-red-500 bg-red-50'
                           : 'border-gray-200 bg-white hover:border-gray-300'
-                      }`}
+                        }`}
                     >
                       <div className="font-semibold text-gray-900 text-sm line-clamp-1">{event.eventName}</div>
                       <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">

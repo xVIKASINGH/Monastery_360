@@ -184,7 +184,10 @@ const Monastery360 = () => {
               <a  onClick={() => router.push("/historical-archives")} className="hover:text-yellow-400 transition">
                 Historical Archives
               </a>
-
+               <a  onClick={() => router.push("/events")} className="hover:text-yellow-400 transition">
+                Cultural events & festivals
+              </a>
+              
               {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
               {session?.user ? (
                 <div className="relative">
