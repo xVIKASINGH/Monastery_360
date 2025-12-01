@@ -128,7 +128,6 @@ export default function SikkimMap() {
       >
         Sikkim — Journey Through Monasteries
       </h1>
-
       {/* ---- HOVER DISTRICT NAME ---- */}
       {hoverDistrict && (
         <div
@@ -180,65 +179,6 @@ export default function SikkimMap() {
             ))}
         </MapContainer>
       </div>
-
-      {/* ---- MODAL FOR MONASTERY DETAILS ---- */}
-      {/* {selectedMonastery && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "40px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "white",
-            padding: "15px 25px",
-            borderRadius: "12px",
-            width: "350px",
-            textAlign: "center",
-            zIndex: 20,
-            boxShadow: "0 0 20px rgba(0,0,0,0.4)",
-          }}
-        >
-          <div>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", color: "#DA4167" }}>
-              {selectedMonastery.name}
-            </h2>
-            <p>district : {selectedMonastery.district}</p>
-            <p>{selectedMonastery.foundedYear}</p>
-            <p>{selectedMonastery.description}</p>
-          </div>
-
-          <div style={{
-            display: "flex", alignItems: "center",
-            justifyContent: "center", gap: "30px"
-          }}>
-            <button
-              onClick={() => setSelectedMonastery(null)}
-              style={{
-                marginTop: "10px",
-                padding: "6px 12px",
-                background: "white",
-                color: "#DA4167",
-                borderRadius: "6px",
-
-              }}
-            >
-              View more
-            </button>
-            <button
-              onClick={() => setSelectedMonastery(null)}
-              style={{
-                marginTop: "10px",
-                padding: "6px 12px",
-                background: "#DA4167",
-                color: "white",
-                borderRadius: "6px",
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
       {/* ---- MODAL FOR MONASTERY DETAILS ---- */}
       {selectedMonastery && (
         <div
