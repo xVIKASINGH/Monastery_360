@@ -4,6 +4,7 @@ export interface IBooking extends Document {
   user: mongoose.Types.ObjectId;
   event: mongoose.Types.ObjectId; 
   date: Date;
+  orderId: string;
   numberOfPeople: number;
   ticketPrice: number;
   totalAmount: number;
@@ -22,7 +23,7 @@ const BookingSchema = new Schema<IBooking>({
     ref: "Event", // ← changed from Monastery
     required: true,
   },
-
+  orderId: { type: String, required: true },
   date: { type: Date, required: true },
   numberOfPeople: { type: Number, required: true },
   ticketPrice: { type: Number, required: true },

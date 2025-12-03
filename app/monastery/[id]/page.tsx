@@ -1,10 +1,26 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { MapPin, Calendar, Users, Heart, Share2, ChevronLeft, ChevronRight, Star, Loader2, Wifi, Utensils, Wind, Droplet } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { 
+  MapPin, 
+  Calendar, 
+  Users, 
+  Heart, 
+  Share2, 
+  ChevronLeft, 
+  ChevronRight, 
+  Star, 
+  Loader2, 
+  Wifi, 
+  Utensils, 
+  Wind, 
+  Droplet,
+  Compass
+} from 'lucide-react';
 import MonasteryAerialPage from '@/app/map-testing/page';
-import { useRouter } from 'next/navigation';
+
 type Location = string | { lat: number; long: number; address: string };
+
 interface IMonasteryEvent {
   _id: string;
   eventName: string;
@@ -24,6 +40,7 @@ interface IMonasteryEvent {
   totaltickets: number;
   bookedTickets: number;
 }
+
 interface IEvent {
   _id: string;
   monasteryId: string;
@@ -43,6 +60,7 @@ interface IEvent {
   createdAt: string;
   updatedAt: string;
 }
+
 interface IMonasteryData {
   _id: string;
   name: string;
@@ -68,8 +86,10 @@ interface IMonasteryData {
   amenities: string[] | null;
   events: IMonasteryEvent[] | null;
 }
+
 export default function MonasteryDetail() {
   const params = useParams();
+  const router = useRouter();
   const monasteryId = (params?.id as string | null | undefined) ?? null;
 
   const [monastery, setMonastery] = useState<IMonasteryData | null>(null);
@@ -81,6 +101,7 @@ export default function MonasteryDetail() {
   const [events, setEvents] = useState<IEvent[]>([]);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
     if (!monasteryId) {
@@ -142,9 +163,10 @@ export default function MonasteryDetail() {
 
     fetchEvents();
   }, [monasteryId]);
+
   const handleLikeToggle = async () => {
     const newLikedState = !liked;
-    setLiked(newLikedState); // optimistic UI
+    setLiked(newLikedState);
 
     try {
       const res = await fetch("/api/liked-monastery", {
@@ -165,12 +187,80 @@ export default function MonasteryDetail() {
       console.log("Like updated:", await res.json());
     } catch (err) {
       console.error("Error updating like:", err);
-      setLiked(!newLikedState); // revert UI on failure
+      setLiked(!newLikedState);
     }
   };
 
-  console.log(events);
+  const handlePayment = async () => {
+    if (!selectedEvent) return;
 
+    try {
+      setPaymentLoading(true);
+
+      // 1️⃣ Create order from your API
+      const orderRes = await fetch("/api/razorpay/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: selectedEvent.ticketPrice * 100, // Razorpay expects amount in paise
+          eventId: selectedEvent._id,
+          monasteryId: monastery?._id,
+        }),
+      });
+
+      const order = await orderRes.json();
+
+      // 2️⃣ Load Razorpay SDK
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      document.body.appendChild(script);
+
+      script.onload = () => {
+        // 3️⃣ Open Razorpay Checkout
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_TEST_KEY_ID!,
+          amount: order.amount,
+          currency: order.currency,
+          name: "Sikkim Monastery Platform",
+          description: `Ticket for ${selectedEvent.eventName}`,
+          order_id: order.id,
+         handler: async function (response) {
+  console.log("Payment Success:", response);
+
+  await fetch("/api/create-tickets", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      paymentId: response.razorpay_payment_id,
+      orderId: response.razorpay_order_id,
+      signature: response.razorpay_signature,
+
+      eventId: selectedEvent._id,
+      ticketPrice: selectedEvent.ticketPrice,
+      numberOfPeople: 1,
+      totalAmount: selectedEvent.ticketPrice * 1,
+    }),
+  });
+
+  alert("🎉 Ticket booked successfully!");
+}
+,
+          theme: {
+            color: "#ef4444", // red vibe
+          },
+        };
+
+        // @ts-ignore
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      };
+    } catch (err) {
+      console.error("Payment Error:", err);
+      alert("❌ Payment failed. Please try again.");
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
 
   const getLocationString = (location: Location): string => {
     if (typeof location === 'string') return location;
@@ -208,7 +298,7 @@ export default function MonasteryDetail() {
   const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % monastery.images.length);
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + monastery.images.length) % monastery.images.length);
   const selectedEvent = getSelectedEvent();
-  const router = useRouter();
+
   return (
     <div className="bg-white min-h-screen">
       {/* Navigation Header */}
@@ -352,20 +442,35 @@ export default function MonasteryDetail() {
             locationText="sikkim"
           />
 
+          {/* 360 Degree Virtual Tour */}
+          <div className="mb-12 pb-8 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Interactive 360° Tour</h2>
+            <p className="text-gray-700 leading-relaxed text-base mb-6">
+              Immerse yourself in the spiritual ambiance. Take a complete virtual walk-through of the monastery grounds and interiors from the comfort of your screen.
+            </p>
+            <button
+              onClick={() => router.push(`/full-view/${monastery._id}`)}
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150 gap-2"
+            >
+              <Compass size={18} />
+              Start 360° Virtual Tour
+            </button>
+          </div>
 
-{/* Historical Archives Redirect */}
-          <div className="mb-12 pb-8 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Historical Archives</h2>
-            <p className="text-gray-700 leading-relaxed text-base mb-6 ">
-              Discover the deep history, founding stories, and detailed documentation of the {monastery.name}.
-            </p>
-            <a 
-              href={`/historical-archives/monastery/${monastery._id}`}
-              className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150"
-            >
-              View Full Archives 📜
-            </a>
-          </div>
+          {/* Historical Archives Redirect */}
+          <div className="mb-12 pb-8 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Historical Archives</h2>
+            <p className="text-gray-700 leading-relaxed text-base mb-6 ">
+              Discover the deep history, founding stories, and detailed documentation of the {monastery.name}.
+            </p>
+            <a
+              href={`/historical-archives/monastery/${monastery._id}`}
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150"
+            >
+              View Full Archives 📜
+            </a>
+          </div>
+
           {/* Upcoming Events & Festivals */}
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upcoming Events & Festivals</h2>
@@ -378,14 +483,9 @@ export default function MonasteryDetail() {
                 {events.map((event) => (
                   <div key={event._id} className="rounded-lg cursor-pointer overflow-hidden border border-gray-200 hover:shadow-lg transition">
                     {event.images && event.images.length > 0 ? (
-                      <div 
-                      // onClick={() => {
-                      //   console.log(event._id);
-                      //   console.log(event);
-                      //   return router.push(`/events`)
-                      // }} 
-                      onClick={() => router.push(`/events/${event._id}`)}
-                      className="w-full h-40 bg-gray-200 overflow-hidden">
+                      <div
+                        onClick={() => router.push(`/events/${event._id}`)}
+                        className="w-full h-40 bg-gray-200 overflow-hidden">
                         <img
                           src={event.images[0]}
                           alt={event.eventName}
@@ -397,9 +497,7 @@ export default function MonasteryDetail() {
                         <span className="text-gray-600 text-sm">No image available</span>
                       </div>
                     )}
-                    <div className="p-3"
-
-                    >
+                    <div className="p-3">
                       <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2">{event.eventName}</h3>
                       <div className="flex items-center gap-1 text-xs text-gray-600">
                         <Calendar size={14} />
@@ -414,7 +512,6 @@ export default function MonasteryDetail() {
             )}
           </div>
         </div>
-        
 
         {/* Booking Card */}
         <div className="col-span-1">
@@ -432,8 +529,8 @@ export default function MonasteryDetail() {
                       key={event._id}
                       onClick={() => setSelectedEventId(event._id)}
                       className={`w-full text-left p-3 rounded-lg border-2 transition ${selectedEventId === event._id
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
                         }`}
                     >
                       <div className="font-semibold text-gray-900 text-sm line-clamp-1">{event.eventName}</div>
@@ -464,8 +561,19 @@ export default function MonasteryDetail() {
                   <p className="text-sm text-gray-600">per ticket</p>
                 </div>
 
-                <button className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition mb-4">
-                  Be a part of Event
+                <button 
+                  onClick={handlePayment}
+                  disabled={paymentLoading}
+                  className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition mb-4 disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {paymentLoading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Be a part of Event'
+                  )}
                 </button>
 
                 <div className="mb-6 pb-6 border-b border-gray-200 space-y-3 text-sm">

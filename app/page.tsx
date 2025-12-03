@@ -12,6 +12,7 @@ import { AuthModal } from "./signin/page";
 import { useSession, signOut } from "next-auth/react";
 import MonasteryCarousel from "@/components/ui/MonasteryCarausal";
 import { MonasteryType } from "@/components/ui/MonasteryCarausal";
+import Monastery360Chatbot from "@/lib/assitantComponents";
 const Monastery360 = () => {
   const router = useRouter();
   // Auth modal state
@@ -233,7 +234,7 @@ const Monastery360 = () => {
               <span className="text-white">Monastery</span>
               <span className="text-yellow-400">360</span>
             </div>
-
+            
             <div className="hidden md:flex items-center space-x-8">
               <a onClick={() => router.push("/art-gallery")} className="hover:text-yellow-400 transition cursor-pointer">
                 Art Gallery
@@ -328,7 +329,7 @@ const Monastery360 = () => {
             </p>
           </div>
         </div>
-
+<Monastery360Chatbot/>
 
         {/* Bottom Info */}
         <div className="absolute bottom-0 left-0 right-0 z-30 pb-12 px-8">
@@ -470,7 +471,7 @@ const Monastery360 = () => {
         </div>
       </section>
 
-
+ 
       <footer className="bg-gray-950 py-12 px-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <p className="text-gray-400 text-center">
