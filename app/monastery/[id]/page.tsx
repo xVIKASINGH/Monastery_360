@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { MapPin, Calendar, Users, Heart, Share2, ChevronLeft, ChevronRight, Star, Loader2, Wifi, Utensils, Wind, Droplet } from 'lucide-react';
 import MonasteryAerialPage from '@/app/map-testing/page';
 import { useRouter } from 'next/navigation';
+import { IHotel } from '@/models/hotelsModel';
 type Location = string | { lat: number; long: number; address: string };
 interface IMonasteryEvent {
   _id: string;
@@ -82,6 +83,10 @@ export default function MonasteryDetail() {
   const [eventsLoading, setEventsLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
+  const [hotels, setHotels] = useState<IHotel[] | null>(null);
+const [hotelsLoading, setHotelsLoading] = useState(true);
+
+
   useEffect(() => {
     if (!monasteryId) {
       setIsLoading(false);
@@ -101,7 +106,6 @@ export default function MonasteryDetail() {
         }
 
         const data: IMonasteryData = await res.json();
-        console.log("Monastry That i fetched:", data);
         setMonastery(data);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error while fetching data.';
@@ -142,6 +146,33 @@ export default function MonasteryDetail() {
 
     fetchEvents();
   }, [monasteryId]);
+
+
+  useEffect(() => {
+  if (!monasteryId) return;
+
+  const fetchData = async () => {
+    setHotelsLoading(true);
+    try {
+      const res = await fetch(`/api/hotels/monastery/${monasteryId}`)
+      if (!res.ok) {
+        throw new Error(`Failed to fetch hotel. Status: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log(data.hotels);
+      setHotels(data.hotels);
+    } catch (err) {
+      console.error("Error fetching hotel:", err);
+      setHotels(null);
+    } finally {
+      setHotelsLoading(false);
+    }
+  };
+
+  fetchData();
+}, [monasteryId]);
+
+
   const handleLikeToggle = async () => {
     const newLikedState = !liked;
     setLiked(newLikedState); // optimistic UI
@@ -169,7 +200,6 @@ export default function MonasteryDetail() {
     }
   };
 
-  console.log(events);
 
 
   const getLocationString = (location: Location): string => {
@@ -225,7 +255,6 @@ export default function MonasteryDetail() {
           </div>
         </div>
       </div>
-
       {/* Image Gallery */}
       <section className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-3 gap-2 h-96 mb-4 rounded-xl overflow-hidden">
@@ -272,7 +301,6 @@ export default function MonasteryDetail() {
             </div>
           ))}
         </div>
-
         <div className="flex gap-2">
           {monastery.images.map((img, idx) => (
             <button
@@ -302,7 +330,7 @@ export default function MonasteryDetail() {
               {monastery.guestFavorite && <span className="text-sm text-gray-700">⭐ Guest favorite</span>}
             </div>
           </div>
-
+          
           {/* Details */}
           <div className="mb-8 pb-8 border-b border-gray-200">
             <div className="grid grid-cols-4 gap-6 mb-6">
@@ -413,9 +441,68 @@ export default function MonasteryDetail() {
               <p className="text-gray-600 text-center py-8">No upcoming events available</p>
             )}
           </div>
-        </div>
-        
+          {/* Hotels */}
+          <div>
+  <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+    Nearby Hotels
+  </h2>
 
+  {hotelsLoading ? (
+    <div className="flex items-center justify-center py-8">
+      <Loader2 className="animate-spin text-gray-900" size={24} />
+    </div>
+  ) : hotels && hotels.length > 0 ? (
+    <div className="grid grid-cols-3 gap-4">
+      {hotels.map((hotel) => {
+        // clean first image
+        const firstImage =
+          hotel.images && hotel.images.length > 0
+            ? hotel.images[0]
+                .replace("[", "")
+                .replace("]", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace('"', "")
+                .split(",")[0]
+            : null;
+
+        return (
+          <div
+            key={hotel.name}
+            className="rounded-lg cursor-pointer overflow-hidden border border-gray-200 hover:shadow-lg transition"
+            onClick={() => router.push(`/hotels/${hotel._id}`)}
+          >
+            {firstImage ? (
+              <div className="w-full h-40 bg-gray-200 overflow-hidden">
+                <img
+                  src={firstImage}
+                  alt={hotel.name}
+                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-40 bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-600 text-sm">No image</span>
+              </div>
+            )}
+
+            <div className="p-3">
+              <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                {hotel.name}
+              </h3>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <p className="text-gray-600 text-center py-8">
+      No hotels available near this monastery.
+    </p>
+  )}
+</div>
+
+        </div>
         {/* Booking Card */}
         <div className="col-span-1">
           <div className="border border-gray-300 rounded-xl p-6 sticky top-24 shadow-md">

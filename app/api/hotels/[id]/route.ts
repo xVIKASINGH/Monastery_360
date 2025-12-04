@@ -1,22 +1,22 @@
-import Monastery from "@/models/monasteriesModel";
+import Hotel from "@/models/hotelsModel"
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnnect";
 
 export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
-    console.log("Fetching monastery with ID:", params.id);
+    console.log("Fetching hotel with ID:", params.id);
     await dbConnect();
     console.log(params.id);
-    const monastery = await Monastery.findById(params.id);
+    const hotel = await Hotel.findById(params.id);
 
-    if (!monastery) {
-      return new NextResponse("Monastery not found", { status: 404 });
+    if (!hotel) {
+      return new NextResponse("Hotel not found", { status: 404 });
     }
 
-    return NextResponse.json(monastery);
+    return NextResponse.json(hotel);
   } catch (error) {
-    console.error("Error fetching monastery:", error);
+    console.error("Error fetching hotel:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

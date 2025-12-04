@@ -19,8 +19,6 @@ export async function GET(req: Request, context: any) {
     }
 
     const events = await eventsModel.find({ monasteryId }).lean();
-    console.log("Fetched monastery events:", events);
-
     return NextResponse.json(
       {
         success: true,

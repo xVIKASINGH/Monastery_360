@@ -15,15 +15,14 @@ export async function GET() {
     console.log("Fetched monasteries:", monasteries);
     return Response.json(monasteries, { status: 200 });
   } catch (error) {
-  console.error("Error fetching monasteries:", error);
+    console.error("Error fetching monasteries:", error);
 
-  const message =
-    error instanceof Error ? error.message : "Something went wrong";
+    const message =
+      error instanceof Error ? error.message : "Something went wrong";
 
-  return Response.json(
-    { message: "Failed to fetch monasteries", error: message },
-    { status: 500 }
-  );
-}
-
+    return Response.json(
+      { message: "Failed to fetch monasteries", error: message },
+      { status: 500 }
+    );
+  }
 }

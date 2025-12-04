@@ -112,8 +112,7 @@ const Monastery360 = () => {
       const res = await fetch(`/api/monastries`);
       const data = await res.json();
       setMonastery(data);
-      console.log(data);
-
+      
     }
     fetchData();
   }, []);
@@ -276,9 +275,6 @@ const Monastery360 = () => {
                       <div className="px-4 py-2 font-semibold border-b">
                         {userName}
                       </div>
-
-
-
                       <button
                         onClick={() => {
                           router.push(getDashboardRoute(userRole));
@@ -288,9 +284,6 @@ const Monastery360 = () => {
                       >
                         Dashboard
                       </button>
-
-
-
                       <button
                         onClick={() => signOut()}
                         className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
@@ -469,8 +462,6 @@ const Monastery360 = () => {
           </div>
         </div>
       </section>
-
-
       <footer className="bg-gray-950 py-12 px-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <p className="text-gray-400 text-center">

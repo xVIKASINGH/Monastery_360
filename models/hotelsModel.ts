@@ -16,6 +16,7 @@ export interface IHotel extends Document {
     coordinates: [number, number]; // [lng, lat]
   };
   googleMapsEmbedUrl?: string;
+  monasteryId : mongoose.Schema.Types.ObjectId;
 }
 
 const HotelSchema = new Schema<IHotel>(
@@ -46,6 +47,7 @@ const HotelSchema = new Schema<IHotel>(
 
     // Optional embed URL for iframe
     googleMapsEmbedUrl: { type: String },
+    monasteryId : {type : Schema.Types.ObjectId}
   },
   { timestamps: true }
 );

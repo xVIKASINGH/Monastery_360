@@ -6,6 +6,7 @@ import L from "leaflet";
 import { GeoJsonObject } from "geojson";
 import { useRouter } from "next/navigation";
 import { Types } from "mongoose";
+import { div } from "framer-motion/client";
 // Type for Monasteries
 type Monastery = {
   _id: Types.ObjectId;
@@ -129,7 +130,7 @@ export default function SikkimMap() {
   const [monasteries, setMonasteries] = useState<Monastery[] | null>(null);
   const [hoverDistrict, setHoverDistrict] = useState<string>(""); // ⭐ hover text state
   const [selectedMonastery, setSelectedMonastery] = useState<Monastery | null>(null);
-  // const [district, setDistrict] = useState<District[] || null>(null);
+  const [districtData, setDistrictData] = useState<District[] | null>(null);
   const router = useRouter();
   // Fetching geojson & monasteries list
   useEffect(() => {
@@ -155,12 +156,14 @@ export default function SikkimMap() {
     }
     fetchData();
   }, []);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const data = await fetch(`/api/district/${}`);
-  //   }
-  //   fetchData();
-  // }, [])
+  useEffect(() => {
+    async function fetchData() {
+      const data = await fetch(`/api/district`);
+      const dis = await data.json();
+      setDistrictData(dis);
+    }
+    fetchData();
+  }, [])
   // Boundary of Sikkim map
   const bounds: L.LatLngBoundsLiteral = [
     [27.0, 88.0],
@@ -213,7 +216,6 @@ export default function SikkimMap() {
           zIndex: 1,
         }}
       />
-
       {/* ---- PAGE TITLE ---- */}
       <h1
         style={{
@@ -250,7 +252,7 @@ export default function SikkimMap() {
           {hoverDistrict}
         </div>
       )}
-
+      
       {/* ---- MAP ---- */}
       {/* ---- LEGEND BOX ---- */}
       <div
