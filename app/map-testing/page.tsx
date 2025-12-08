@@ -29,7 +29,7 @@ export default function MonasteryAerialPage({
   rating = 4.5,
   reviewsCount = 100,
   locationText = "Gangtok, Sikkim",
-}: Partial<MonasteryAerialPageProps>) {
+}: any) {
   return (
     <div className="w-full bg-white">
       {/* Content */}

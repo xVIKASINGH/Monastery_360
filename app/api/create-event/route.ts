@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadToCloudinary } from "@/lib/uploadCloudinary"; 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";// NOTE: Replace with your actual MongoDB model and connection logic
+import { authOptions } from "@/lib/authOptions";// NOTE: Replace with your actual MongoDB model and connection logic
 // import EventModel from '@/models/EventModel'; 
 import eventsModel from "@/models/eventsModel";
 import User from "@/models/User";
