@@ -58,7 +58,7 @@ const HotelCard: React.FC<{
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onToggleFavorite(hotel._id);
+                onToggleFavorite(hotel._id.toString());
               }}
               className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50"
             >
@@ -194,10 +194,10 @@ const HotelsListing = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {hotels.map((hotel, index) => (
             <HotelCard
-              key={hotel._id}
+              key={hotel._id.toString()}
               hotel={hotel}
               index={index}
-              isFavorite={favorites.has(hotel._id)}
+              isFavorite={favorites.has(hotel._id.toString())}
               onToggleFavorite={toggleFavorite}
             />
           ))}

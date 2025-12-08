@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 // TypeScript Interfaces
-interface Hotel extends Document {
+interface Hotel {
   _id: string;
   name: string;
   description?: string;

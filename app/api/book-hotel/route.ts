@@ -47,14 +47,13 @@ export async function POST(req: Request) {
 
     // Upload each image to Cloudinary
     for (const img of images) {
-      const bytes = await img.arrayBuffer();
-      const base64 = Buffer.from(bytes).toString("base64");
-      const imgUri = `data:${img.type};base64,${base64}`;
-
-      const uploadRes = await uploadToCloudinary(imgUri, "hotel-images");
-
-      if (uploadRes.success && uploadRes.url) {
-        uploadedImages.push(uploadRes.url);
+      try {
+        const url = await uploadToCloudinary(img, "hotel-images");
+        if (url) {
+          uploadedImages.push(url);
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
       }
     }
 

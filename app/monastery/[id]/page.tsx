@@ -1,19 +1,19 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { 
-  MapPin, 
-  Calendar, 
-  Users, 
-  Heart, 
-  Share2, 
-  ChevronLeft, 
-  ChevronRight, 
-  Star, 
-  Loader2, 
-  Wifi, 
-  Utensils, 
-  Wind, 
+import {
+  MapPin,
+  Calendar,
+  Users,
+  Heart,
+  Share2,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Loader2,
+  Wifi,
+  Utensils,
+  Wind,
   Droplet,
   Compass,
   Map as MapIcon
@@ -39,7 +39,7 @@ interface IMonasteryEvent {
   ticketPrice: number;
   totaltickets: number;
   bookedTickets: number;
-  googleMapsLink: string 
+  googleMapsLink: string
 }
 
 interface IEvent {
@@ -87,6 +87,12 @@ interface IMonasteryData {
   amenities: string[] | null;
   events: IMonasteryEvent[] | null;
   googleMapsLink: string;
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
 }
 
 export default function MonasteryDetail() {
@@ -226,7 +232,7 @@ export default function MonasteryDetail() {
           name: "Sikkim Monastery Platform",
           description: `Ticket for ${selectedEvent.eventName}`,
           order_id: order.id,
-         handler: async function (response) {
+         handler: async function (response: RazorpayResponse) {
   console.log("Payment Success:", response);
 
   await fetch("/api/create-tickets", {
@@ -401,10 +407,10 @@ export default function MonasteryDetail() {
           {/* Details */}
           <div className="mb-8 pb-8 border-b border-gray-200">
             <div className="grid grid-cols-4 gap-6 mb-6">
-            
-            
-             
-              
+
+
+
+
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-start gap-3">
@@ -563,7 +569,7 @@ export default function MonasteryDetail() {
                   <p className="text-sm text-gray-600">per ticket</p>
                 </div>
 
-                <button 
+                <button
                   // onClick={handlePayment}
                   disabled={paymentLoading}
                   className="w-full bg-yellow-400 text-white py-3 rounded-lg font-semibold hover:bg-yellow-400 transition mb-4 disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"

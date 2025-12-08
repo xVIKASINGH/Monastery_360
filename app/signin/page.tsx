@@ -216,9 +216,9 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
         className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col md:flex-row transform transition-all duration-300 scale-100 opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
-        
+
         {/* Left Side - Background Image */}
-        <div 
+        <div
           className="md:w-1/2 p-8 flex flex-col items-center justify-center relative bg-cover bg-center"
           style={{ backgroundImage: backgroundImagePath ? `url(${backgroundImagePath})` : undefined }}
         >
@@ -297,7 +297,7 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
               {/* Email Input */}
               <div>
                 <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <div className="relative" onClick={(e) => e.stopPropagation()}> 
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     id="login-email"
@@ -513,5 +513,15 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  const router = useRouter();
+  return (
+    <AuthModal
+      isOpen={true}
+      onClose={() => router.push('/')}
+    />
   );
 }

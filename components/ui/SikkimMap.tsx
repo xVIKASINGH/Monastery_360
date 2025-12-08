@@ -3,7 +3,7 @@ import { MapContainer, GeoJSON, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { GeoJsonObject } from "geojson";
+
 import { useRouter } from "next/navigation";
 import { Types } from "mongoose";
 import { div } from "framer-motion/client";
@@ -126,7 +126,7 @@ const adventurePlaces = Object.entries(adventures).map(([name, data]) => ({
 }));
 
 export default function SikkimMap() {
-  const [districts, setDistricts] = useState<GeoJsonObject | null>(null);
+  const [districts, setDistricts] = useState<any | null>(null);
   const [monasteries, setMonasteries] = useState<Monastery[] | null>(null);
   const [hoverDistrict, setHoverDistrict] = useState<string>(""); // ⭐ hover text state
   const [selectedMonastery, setSelectedMonastery] = useState<Monastery | null>(null);
@@ -137,7 +137,7 @@ export default function SikkimMap() {
     async function fetchData() {
       // fetch districts
       const districtsRes = await fetch("/Sikkim/SIKKIM_DISTRICTS.geojson");
-      const districtsData: GeoJsonObject = await districtsRes.json();
+      const districtsData: any = await districtsRes.json();
       setDistricts(districtsData);
 
       // fetch monasteries from API
@@ -252,7 +252,7 @@ export default function SikkimMap() {
           {hoverDistrict}
         </div>
       )}
-      
+
       {/* ---- MAP ---- */}
       {/* ---- LEGEND BOX ---- */}
       <div
