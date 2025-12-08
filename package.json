@@ -11,8 +11,11 @@
   "dependencies": {
     "@google/genai": "^1.30.0",
     "@googlemaps/js-api-loader": "^2.0.2",
+    "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@react-google-maps/api": "^2.20.7",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
     "@types/dotenv": "^6.1.1",
     "animate.css": "^4.1.1",
     "axios": "^1.13.2",
@@ -25,13 +28,15 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.554.0",
     "mongoose": "^9.0.0",
+    "motion": "^12.23.25",
     "next": "16.0.3",
     "next-auth": "^4.24.13",
     "razorpay": "^2.9.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-leaflet": "^5.0.0",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.181.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

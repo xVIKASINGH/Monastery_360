@@ -84,11 +84,11 @@ const Monastery360Chatbot: React.FC = () => {
       }
 
       const data = await response.json();
-        console.log("Chat bot response data:", data)
+      console.log("Chat bot response data:", data);
       const assistantMessage: Message = {
         id: `${Date.now()}-assistant`,
         type: "assistant",
-        content: data.reply|| data.response || "Unable to process your request.",
+        content: data.reply || data.response || "Unable to process your request.",
         timestamp: new Date(),
       };
 
@@ -128,7 +128,7 @@ const Monastery360Chatbot: React.FC = () => {
 
       {/* Chat Modal */}
       {isOpen && (
-        <div className="fixed bottom-8 right-8 z-50 w-96 h-[600px] bg-white rounded-3xl shadow-2xl flex flex-col border border-yellow-200 overflow-hidden">
+        <div className="fixed bottom-8 right-8 z-50 w-96 h-[600px] bg-black rounded-3xl shadow-2xl flex flex-col border border-yellow-400/20 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 flex items-center justify-between">
             <div>
@@ -150,17 +150,17 @@ const Monastery360Chatbot: React.FC = () => {
           {/* Messages Container */}
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-white via-yellow-50 to-white space-y-4"
+            className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-gray-900 via-black to-gray-900 space-y-4"
           >
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center">
-                <div className="bg-yellow-100 p-4 rounded-full mb-4">
-                  <MessageCircle className="text-yellow-600" size={32} />
+                <div className="bg-yellow-400/10 border border-yellow-400/20 p-4 rounded-full mb-4">
+                  <MessageCircle className="text-yellow-400" size={32} />
                 </div>
-                <h4 className="text-gray-800 font-semibold mb-2">
+                <h4 className="text-white font-semibold mb-2">
                   Welcome to Monastery360
                 </h4>
-                <p className="text-gray-600 text-sm max-w-xs">
+                <p className="text-gray-400 text-sm max-w-xs">
                   Ask me anything about monasteries, itineraries, or cultural experiences in Sikkim.
                 </p>
               </div>
@@ -177,7 +177,7 @@ const Monastery360Chatbot: React.FC = () => {
                       className={`max-w-xs lg:max-w-sm px-4 py-3 rounded-2xl ${
                         msg.type === "user"
                           ? "bg-yellow-400 text-black rounded-br-none font-medium"
-                          : "bg-gray-200 text-gray-800 rounded-bl-none text-sm leading-relaxed"
+                          : "bg-gray-800 text-gray-200 rounded-bl-none text-sm leading-relaxed border border-gray-700"
                       }`}
                     >
                       {msg.content}
@@ -186,8 +186,8 @@ const Monastery360Chatbot: React.FC = () => {
                 ))}
                 {isLoading && (
                   <div className="flex justify-start animate-fadeIn">
-                    <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl rounded-bl-none flex items-center space-x-2">
-                      <Loader2 size={16} className="animate-spin" />
+                    <div className="bg-gray-800 text-gray-300 px-4 py-3 rounded-2xl rounded-bl-none flex items-center space-x-2 border border-gray-700">
+                      <Loader2 size={16} className="animate-spin text-yellow-400" />
                       <span className="text-xs">Thinking...</span>
                     </div>
                   </div>
@@ -199,8 +199,8 @@ const Monastery360Chatbot: React.FC = () => {
 
           {/* Suggested Prompts */}
           {messages.length === 0 && (
-            <div className="px-6 py-4 bg-yellow-50 border-t border-yellow-200">
-              <p className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-3">
+            <div className="px-6 py-4 bg-gray-800/50 border-t border-yellow-400/10">
+              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
                 Quick Questions
               </p>
               <div className="space-y-2">
@@ -209,7 +209,7 @@ const Monastery360Chatbot: React.FC = () => {
                     key={`${currentPromptBatch}-${idx}`}
                     onClick={() => sendMessage(prompt)}
                     disabled={isLoading}
-                    className="w-full text-left text-xs text-gray-700 hover:text-yellow-600 bg-white hover:bg-yellow-100 p-2 rounded-lg border border-yellow-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed line-clamp-2"
+                    className="w-full text-left text-xs text-gray-300 hover:text-yellow-400 bg-gray-900/50 hover:bg-yellow-400/10 p-2 rounded-lg border border-gray-700 hover:border-yellow-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed line-clamp-2"
                   >
                     {prompt}
                   </button>
@@ -219,7 +219,7 @@ const Monastery360Chatbot: React.FC = () => {
           )}
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-yellow-200">
+          <div className="p-4 bg-gray-900 border-t border-yellow-400/10">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -232,12 +232,12 @@ const Monastery360Chatbot: React.FC = () => {
                 }}
                 placeholder="Ask me anything..."
                 disabled={isLoading}
-                className="flex-1 bg-gray-100 text-gray-800 placeholder-gray-500 rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:opacity-50"
+                className="flex-1 bg-gray-800 text-white placeholder-gray-500 rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-gray-700 disabled:opacity-50"
               />
               <button
                 onClick={() => sendMessage()}
                 disabled={isLoading || !inputValue.trim()}
-                className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-300 text-black rounded-full p-3 transition-all disabled:cursor-not-allowed"
+                className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-600 text-black rounded-full p-3 transition-all disabled:cursor-not-allowed"
               >
                 <Send size={18} />
               </button>
@@ -250,7 +250,7 @@ const Monastery360Chatbot: React.FC = () => {
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/20 z-40"
+          className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
         />
       )}
 

@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const { amount, currency = "INR", receipt } = await req.json();
 
     const options = {
-      amount: amount * 100, // amount in paise
+      amount: amount , // amount in paise
       currency,
       receipt: receipt || "receipt_" + Date.now(),
     };

@@ -10,9 +10,13 @@ import {
 import { useRouter } from "next/navigation";
 import { AuthModal } from "./signin/page";
 import { useSession, signOut } from "next-auth/react";
-import MonasteryCarousel from "@/components/ui/MonasteryCarausal";
-import { MonasteryType } from "@/components/ui/MonasteryCarausal";
+import Carousel from "@/components_styling/carousel";
+
 import Monastery360Chatbot from "@/lib/assitantComponents";
+import Footer from "@/common/footer";
+import { CuratedItineraries } from "@/components/ui/itenary";
+import { FeaturedMonasteries } from "@/components_styling/featured_monastery";
+import { DownloadAppSection } from "@/components/ui/downloadApp";
 const Monastery360 = () => {
   const router = useRouter();
   // Auth modal state
@@ -21,6 +25,7 @@ const Monastery360 = () => {
   const [currentVideo, setCurrentVideo] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // NEXTAUTH session
@@ -118,6 +123,15 @@ const Monastery360 = () => {
     fetchData();
   }, []);
 
+  // Handle scroll to show navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowSticky(window.scrollY > window.innerHeight * 0.8);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
@@ -178,6 +192,91 @@ const Monastery360 = () => {
   const userImage = session?.user?.image;
   const initials = getInitials(userName);
   const avatarColor = getAvatarColor(userName);
+
+  // Navbar component (used both in hero and sticky)
+  const NavbarContent = () => (
+    <div className="max-w-7xl mx-auto flex items-center justify-between">
+      {/* Logo */}
+      <div className="text-2xl font-bold tracking-wide">
+        <span className="text-white">Monastery</span>
+        <span className="text-yellow-400">360</span>
+      </div>
+      
+      <div className="hidden md:flex items-center space-x-8">
+        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition cursor-pointer">
+          Model 360
+        </a>
+        <a onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition cursor-pointer">
+          Explore Monastries
+        </a>
+        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
+          Plan Your Trip
+        </a>
+        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
+          Historical Archives
+        </a>
+        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
+          Cultural events & festivals
+        </a>
+        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">Sikkim</a>
+        {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
+        {session?.user ? (
+          <div className="relative">
+            {/* Avatar with image or initials */}
+            {userImage ? (
+              <img
+                src={userImage}
+                alt="avatar"
+                className="w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400"
+                onClick={() => setShowDropdown((p) => !p)}
+              />
+            ) : (
+              <div
+                className={`w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400 flex items-center justify-center font-semibold text-white ${avatarColor}`}
+                onClick={() => setShowDropdown((p) => !p)}
+              >
+                {initials}
+              </div>
+            )}
+
+            {showDropdown && (
+              <div className="absolute right-0 mt-3 w-48 bg-white text-black rounded-xl shadow-xl py-3 z-50">
+                <div className="px-4 py-2 font-semibold border-b">
+                  {userName}
+                </div>
+
+                <button
+                  onClick={() => {
+                    router.push(getDashboardRoute(userRole));
+                    setShowDropdown(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Dashboard
+                </button>
+
+                <button
+                  onClick={() => signOut()}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          // 🔥 If NOT logged in → Show Get Started (opens login modal)
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="bg-yellow-400 text-black px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition"
+          >
+            Get Started
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full min-h-screen bg-black text-white overflow-x-hidden">
       {/* Auth Modal */}
@@ -197,6 +296,14 @@ const Monastery360 = () => {
       >
         <source src="/audio/landingpage_audiotape.mpeg" type="audio/mpeg" />
       </audio>
+
+      {/* STICKY NAVBAR - Shows on scroll */}
+      {showSticky && (
+        <nav className="fixed top-0 left-0 right-0 z-40 px-8 py-4 bg-black border-b border-gray-800 transition-all duration-300">
+          <NavbarContent />
+        </nav>
+      )}
+
       {/* Background Videos */}
       <div className="relative h-screen w-full overflow-hidden">
         {monasteries.map((monastery, index) => (
@@ -225,7 +332,7 @@ const Monastery360 = () => {
           </div>
         ))}
 
-        {/* NAVBAR */}
+        {/* NAVBAR - Only on hero section */}
         <nav className="absolute top-0 left-0 right-0 z-30 px-8 py-6">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             {/* Logo */}
@@ -322,7 +429,8 @@ const Monastery360 = () => {
             </p>
           </div>
         </div>
-<Monastery360Chatbot/>
+
+        <Monastery360Chatbot/>
 
         {/* Bottom Info */}
         <div className="absolute bottom-0 left-0 right-0 z-30 pb-12 px-8">
@@ -364,114 +472,11 @@ const Monastery360 = () => {
           </div>
         </div>
       </div>
-      {/* ------------------ ITINERARIES SECTION ------------------ */}
-      <section className="relative w-full py-24 bg-black text-center text-white overflow-hidden">
 
-        {/* Background Blur Map */}
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: "url('/images/01sikkim.jpg')",
-            filter: "blur(4px)",
-          }}
-        ></div>
-
-        {/* Content Wrapper */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <h2 className="text-yellow-400 tracking-widest text-sm sm:text-base uppercase mb-3">
-            Discover Sikkim
-          </h2>
-
-          <h1 className="text-4xl sm:text-6xl font-serif italic font-bold">
-            Curated Itineraries
-          </h1>
-          <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
-            Handpicked travel plans designed to help you explore monasteries, culture, and breathtaking landscapes.
-          </p>
-
-          {/* Carousel */}
-          <div className="mt-12 flex justify-center gap-10 overflow-x-auto no-scrollbar px-4">
-            {itineraries.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col items-center flex-shrink-0"
-              >
-                <img className="w-52 h-72 bg-white/10 rounded-[120px] overflow-hidden shadow-lg border border-white/20" src={item.image} alt={item.place} />
-                <p className="text-yellow-400 font-bold mt-4">{item.days}</p>
-                <p className="text-xl font-bold">{item.place}</p>
-                <p className="text-gray-400 text-sm max-w-[180px] mt-1">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      {/* Moasteries of sikkim */}
-      <section
-        className="relative w-full py-24 bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-200 overflow-hidden"
-      >
-        {/* Single Background Image with black translucent overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "url('/images/03sikkim.webp')",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            filter: "brightness(0.3) contrast(1.1)",
-          }}
-        >
-          {/* Black translucent overlay */}
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-
-          {/* Title */}
-          <h1 className="text-5xl sm:text-6xl font-serif italic font-extrabold text-center mb-14 tracking-widest text-yellow-400 drop-shadow-lg">
-            Monasteries of Sikkim 🕉
-          </h1>
-
-          {/* Carousel cards container */}
-          <div className="flex gap-10 overflow-x-auto no-scrollbar px-4 py-2">
-            {monastery.map((m, idx) => (
-              <div
-                key={idx}
-                className="flex-shrink-0 w-80 bg-white rounded-3xl shadow-xl border-2 border-yellow-400 hover:shadow-yellow-400 hover:scale-[1.05] transition-transform duration-300 cursor-pointer"
-                onClick={() => window.open(`/monastery/${m._id}`, "_self")}
-              >
-                <img
-                  src={m.images?.[0]}
-                  alt={m.name}
-                  className="w-full h-60 object-cover rounded-t-3xl border-b-2 border-yellow-400"
-                  loading="lazy"
-                />
-                <div className="p-6 text-center">
-                  {/* Monastery Name */}
-                  <h2 className="text-3xl font-serif italic font-semibold text-yellow-900 tracking-wide">
-                    {m.name}
-                  </h2>
-
-                  {/* Location info */}
-                  <p className="text-yellow-800 text-base mt-3 font-medium">
-                    {m.villageOrTown} — {m.district}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
- 
-      <footer className="bg-gray-950 py-12 px-8 border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-gray-400 text-center">
-            © 2025 Monastery360 — A SIH 2025 Project.
-          </p>
-        </div>
-      </footer>
+      <FeaturedMonasteries/>
+      <CuratedItineraries/>
+      <DownloadAppSection/>
+      <Footer />
     </div>
   );
 };
