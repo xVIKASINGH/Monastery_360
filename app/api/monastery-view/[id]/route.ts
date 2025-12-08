@@ -1,7 +1,7 @@
 
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import MonasteryImage from "@/models/monasteryImageSchema";
 
 interface Params {

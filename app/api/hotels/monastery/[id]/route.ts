@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Hotel from "@/models/hotelsModel";
-import dbConnnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 export async function GET(req: NextRequest, context: any) {
   try {
-    await dbConnnect();
+    await dbConnect();
     const { id: monasteryId } = await context.params;
     console.log("Params Id : ", monasteryId);
     if (!monasteryId) {

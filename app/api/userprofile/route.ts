@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import dbConnnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
 
 import TicketBooking from "@/models/ticketbookingModel";
@@ -11,7 +11,7 @@ import "@/models/monasteriesModel";
 
 export async function GET() {
   try {
-    await dbConnnect();
+    await dbConnect();
 
     const session = await getServerSession(authOptions);
 

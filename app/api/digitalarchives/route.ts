@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import DigitalArchive from "@/models/digitalArchiveModel";
 export async function GET() {

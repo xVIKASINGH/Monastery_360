@@ -1,4 +1,4 @@
-// import dbConnect from "@/lib/dbConnnect";
+// import dbConnect from "@/lib/dbConnect";
 // import Monastery from "@/models/monasteriesModel"
 // export async function GET() {
 //   await dbConnect();
@@ -6,7 +6,7 @@
 //   console.log(monasteries);
 //   return Response.json(monasteries);
 // }
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import Monastery from "@/models/monasteriesModel";
 import { monasteries as STATIC_MONASTERIES } from "@/data/MapData/mapData";
 import { NextResponse } from "next/server";

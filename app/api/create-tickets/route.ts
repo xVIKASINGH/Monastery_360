@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import connectDB from "@/lib/dbConnnect";
+import connectDB from "@/lib/dbConnect";
 import ticketbookingModel from "@/models/ticketbookingModel";
 import crypto from "crypto";
 

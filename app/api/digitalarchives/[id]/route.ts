@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import DigitalArchive from "@/models/digitalArchiveModel";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 
 export async function GET(
   req: Request,

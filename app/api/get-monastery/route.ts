@@ -1,7 +1,7 @@
 // File: /app/api/get-monastry/route.ts
 
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import monasteriesModel from "@/models/monasteriesModel";
 
 export async function GET() {

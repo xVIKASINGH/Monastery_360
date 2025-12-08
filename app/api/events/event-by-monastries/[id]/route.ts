@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import eventsModel from "@/models/eventsModel";
-import dbConnnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 
 export async function GET(req: Request, context: any) {
   try {
-    await dbConnnect();
+    await dbConnect();
 
     // 👇 FIX: unwrap params from the context
     const { id: monasteryId } = await context.params;
