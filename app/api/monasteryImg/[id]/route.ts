@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import Monastery from "@/models/monasteriesModel"
 export async function GET(

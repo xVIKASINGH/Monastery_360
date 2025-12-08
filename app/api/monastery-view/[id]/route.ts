@@ -1,11 +1,11 @@
 
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import MonasteryImage from "@/models/monasteryImageSchema";
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export interface MonasteryImagesResponse {
@@ -24,7 +24,7 @@ export async function GET(req: Request, { params }: Params) {
 
     const { id } = await params;
      console.log("Fetching images for monastery id:", id);
-  
+
     const images = await MonasteryImage.find({ monastery: id }).select(
       "_id title iframe"
     );

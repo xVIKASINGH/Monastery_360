@@ -8,7 +8,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { AuthModal } from "./signin/page";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { useSession, signOut } from "next-auth/react";
 import Carousel from "@/components_styling/carousel";
 
@@ -17,6 +17,14 @@ import Footer from "@/common/footer";
 import { CuratedItineraries } from "@/components/ui/itenary";
 import { FeaturedMonasteries } from "@/components_styling/featured_monastery";
 import { DownloadAppSection } from "@/components/ui/downloadApp";
+
+interface MonasteryType {
+  _id: string;
+  name: string;
+  location: string | { lat: number; lng: number };
+  images: string[];
+}
+
 const Monastery360 = () => {
   const router = useRouter();
   // Auth modal state
@@ -118,7 +126,7 @@ const Monastery360 = () => {
       const res = await fetch(`/api/monastries`);
       const data = await res.json();
       setMonastery(data);
-      
+
     }
     fetchData();
   }, []);
@@ -201,7 +209,7 @@ const Monastery360 = () => {
         <span className="text-white">Monastery</span>
         <span className="text-yellow-400">360</span>
       </div>
-      
+
       <div className="hidden md:flex items-center space-x-8">
         <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition cursor-pointer">
           Model 360
@@ -340,7 +348,7 @@ const Monastery360 = () => {
               <span className="text-white">Monastery</span>
               <span className="text-yellow-400">360</span>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
               <a onClick={() => router.push("/art-gallery")} className="hover:text-yellow-400 transition cursor-pointer">
                 Art Gallery

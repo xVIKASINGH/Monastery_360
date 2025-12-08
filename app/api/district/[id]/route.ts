@@ -1,6 +1,6 @@
 import District from "@/models/district"
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {

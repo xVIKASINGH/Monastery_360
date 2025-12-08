@@ -1,7 +1,9 @@
 "use client";
 
 import { MapPin, Star, Share2 } from "lucide-react";
-import AerialMap from "../functions/AerialMap";
+import dynamic from "next/dynamic";
+
+const AerialMap = dynamic(() => import("../functions/AerialMap"), { ssr: false });
 
 interface MonasteryAerialPageProps {
   name: string;
@@ -17,17 +19,17 @@ interface MonasteryAerialPageProps {
 }
 
 export default function MonasteryAerialPage({
-  name,
-  description,
-  lat,
-  lng,
-  foundedYear,
-  altitude,
-  nearbyAttractions,
-  rating,
-  reviewsCount,
-  locationText,
-}: MonasteryAerialPageProps) {
+  name = "Default Monastery",
+  description = "This is a default description for testing purposes.",
+  lat = 27.533,
+  lng = 88.512,
+  foundedYear = 1900,
+  altitude = "2000m",
+  nearbyAttractions = [],
+  rating = 4.5,
+  reviewsCount = 100,
+  locationText = "Gangtok, Sikkim",
+}: any) {
   return (
     <div className="w-full bg-white">
       {/* Content */}

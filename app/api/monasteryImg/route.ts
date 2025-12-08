@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import Monastery from "@/models/monasteriesModel";
 import { NextResponse } from "next/server";
 

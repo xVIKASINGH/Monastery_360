@@ -1,5 +1,5 @@
 import Hotel from "@/models/hotelsModel";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 export async function GET() {
   try {
     await dbConnect();

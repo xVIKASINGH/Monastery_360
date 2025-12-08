@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import hotelsModel,{IHotel} from "@/models/hotelsModel";
 import User, { IUser } from "@/models/User";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 
 interface MyHotelsResponse {
   success: boolean;

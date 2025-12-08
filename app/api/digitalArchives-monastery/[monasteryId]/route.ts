@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 import { NextResponse, NextRequest } from "next/server";
 import DigitalArchive from "@/models/digitalArchiveModel";
 import mongoose from "mongoose";

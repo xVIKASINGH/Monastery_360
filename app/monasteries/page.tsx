@@ -115,7 +115,7 @@ const Card: React.FC<{
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onToggleFavorite(monastery.id);
+                onToggleFavorite(monastery._id);
               }}
               className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:bg-gray-50"
             >
@@ -301,7 +301,7 @@ const MonasteryListings: React.FC = () => {
             </div>
 
             <p className="text-gray-600 text-lg max-w-2xl leading-relaxed mt-4">
-              Discover the world's most revered spiritual sanctuaries. Explore ancient 
+              Discover the world's most revered spiritual sanctuaries. Explore ancient
               temples, breathtaking architecture, and profound spiritual heritage.
             </p>
           </div>
@@ -313,10 +313,10 @@ const MonasteryListings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {monasteries.map((monastery, index) => (
             <Card
-              key={monastery.id}
+              key={monastery._id}
               monastery={monastery}
               index={index}
-              isFavorite={favorites.has(monastery.id)}
+              isFavorite={favorites.has(monastery._id)}
               onToggleFavorite={toggleFavorite}
             />
           ))}

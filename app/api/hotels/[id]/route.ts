@@ -1,6 +1,6 @@
 import Hotel from "@/models/hotelsModel"
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/dbConnnect";
+import dbConnect from "@/lib/dbConnect";
 
 export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {

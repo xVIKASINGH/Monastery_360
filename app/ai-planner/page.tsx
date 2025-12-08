@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { MapPin, Calendar, Users, Filter, Loader2, ChevronRight, Check, AlertCircle, ArrowLeft, Download } from "lucide-react";
-import * as Plotly from 'plotly';
+
 
 interface Activity {
   time: string;
@@ -43,10 +43,10 @@ const AVAILABLE_FILTERS = [
 ];
 
 export default function TripPlannerPage() {
-  const [step, setStep] = useState("input");
+  const [step, setStep] = useState<"input" | "result">("input");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formErrors, setFormErrors] = useState({});
+  const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   const [formData, setFormData] = useState({
     district: "",
@@ -55,13 +55,13 @@ export default function TripPlannerPage() {
     startingPoint: "Gangtok",
     language: "en",
     customNotes: "",
-    filters: [],
+    filters: [] as string[],
   });
 
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<PlanResponse | null>(null);
 
   const validateForm = () => {
-    const errors = {};
+    const errors: FormErrors = {};
     if (!formData.district.trim()) errors.district = "Please select a district";
     if (formData.days < 2) errors.days = "Minimum 2 days required";
     if (!formData.travellerType) errors.travellerType = "Please select traveler type";
@@ -69,7 +69,7 @@ export default function TripPlannerPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleFilterToggle = (filterId:string) => {
+  const handleFilterToggle = (filterId: string) => {
     setFormData((prev) => ({
       ...prev,
       filters: prev.filters.includes(filterId)
@@ -78,7 +78,7 @@ export default function TripPlannerPage() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
@@ -277,17 +277,31 @@ export default function TripPlannerPage() {
           </div>
         </div>
       ) : (
-        <TripResultView response={response} formData={formData} onReset={handleReset} />
+        response && <TripResultView response={response} formData={formData} onReset={handleReset} />
       )}
     </div>
   );
 }
 
-function TripResultView({ response, formData, onReset }) {
+interface TripResultViewProps {
+  response: PlanResponse;
+  formData: {
+    district: string;
+    days: number;
+    travellerType: string;
+    startingPoint: string;
+    filters: string[];
+    language: string;
+    customNotes: string;
+  };
+  onReset: () => void;
+}
+
+function TripResultView({ response, formData, onReset }: TripResultViewProps) {
   const [activeDay, setActiveDay] = useState("Day 1");
   const [activeTab, setActiveTab] = useState("itinerary");
   const [downloading, setDownloading] = useState(false);
-  const pdfRef = useRef(null);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   if (!response) return null;
 
@@ -299,13 +313,14 @@ function TripResultView({ response, formData, onReset }) {
 
   const generatePDF = () => {
     setDownloading(true);
-    
+
     setTimeout(() => {
       try {
         // Create a new window for printing
         const printWindow = window.open('', '', 'width=800,height=600');
+        if (!printWindow || !pdfRef.current) return;
         const htmlContent = pdfRef.current.innerHTML;
-        
+
         printWindow.document.write(`
           <!DOCTYPE html>
           <html>
@@ -392,10 +407,10 @@ function TripResultView({ response, formData, onReset }) {
           </body>
           </html>
         `);
-        
+
         printWindow.document.close();
         printWindow.print();
-        
+
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("Error generating PDF. Please try again.");
@@ -555,7 +570,7 @@ function TripResultView({ response, formData, onReset }) {
   );
 }
 
-function Clock(props) {
+function Clock(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
