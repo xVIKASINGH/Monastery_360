@@ -106,4 +106,56 @@ Since your app uses NextAuth, you might need to handle sessions.
         .build()
     ```
 
-**Recommendation:** Start with the **public read-only APIs** (like fetching list of monasteries or events) to verify the connection. They should work out of the box without any auth headers.
+
+## 6. API Endpoint Reference
+Here is a list of available API endpoints you can call. Replace `[id]` or `[monasteryId]` with actual IDs.
+
+### Authentication
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/auth/signin` | (Handled by NextAuth) |
+| `POST` | `/signup` | Register a new user |
+| `GET` | `/userprofile` | Get current user profile |
+
+### Monasteries
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/monastries` | List all monasteries |
+| `GET` | `/monastries/[id]` | Get specific monastery details |
+| `GET` | `/get-monastery` | (Alternative) List monasteries |
+| `GET` | `/monastery-view/[id]` | Get monastery view details |
+| `GET` | `/monasteryImg` | Get monastery images |
+| `POST` | `/liked-monastery` | Like a monastery |
+
+### Events
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/events` | List all events |
+| `GET` | `/events/get-events` | Get all events (Alternative) |
+| `GET` | `/events/[id]` | Get specific event details |
+| `GET` | `/events/event-by-monastries/[id]` | Get events for a specific monastery |
+| `POST` | `/create-event` | Create a new event |
+| `POST` | `/create-tickets` | Create tickets for an event |
+
+### Hotels & Booking
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/hotels` | List all hotels |
+| `GET` | `/hotels/[id]` | Get hotel details |
+| `GET` | `/hotels/monastery/[id]` | Get hotels near a monastery |
+| `GET` | `/get-hotel` | (Alternative) List hotels |
+| `POST` | `/book-hotel` | Book a hotel room |
+| `POST` | `/razorpay/order` | Create Razorpay order for payment |
+
+### Digital Archives & Tours
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/digitalarchives` | List digital archives |
+| `GET` | `/digitalArchives-monastery/[monasteryId]` | Get archives for a monastery |
+
+### Utilities
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/district` | List districts |
+| `POST` | `/chat-bot` | AI Chatbot interaction |
+| `POST` | `/plan` | Generate AI Travel Plan |
