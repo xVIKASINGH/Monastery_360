@@ -8,7 +8,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { AuthModal } from "@/components_styling/auth/AuthModal";
+import { AuthModal } from "./signin/page";
 import { useSession, signOut } from "next-auth/react";
 import Carousel from "@/components_styling/carousel";
 
