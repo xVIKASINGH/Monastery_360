@@ -451,7 +451,7 @@ export default function MonasteryDetail() {
               Immerse yourself in the spiritual ambiance. Take a complete virtual walk-through of the monastery grounds and interiors from the comfort of your screen.
             </p>
             <button
-              // onClick={() => router.push(`/full-view/${monastery._id}`)}
+              onClick={() => router.push(`/full-view/${monastery._id}`)}
               className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150 gap-2"
             >
               <Compass size={18} />
@@ -466,7 +466,7 @@ export default function MonasteryDetail() {
               Discover the deep history, founding stories, and detailed documentation of the {monastery.name}.
             </p>
             <a
-              // href={`/historical-archives/monastery/${monastery._id}`}
+              href={`/historical-archives/monastery/${monastery._id}`}
               className="inline-flex items-center justify-center px-4 py-2 border border-gray-900 text-sm font-medium rounded-lg shadow-sm text-gray-900 bg-white hover:bg-gray-50 transition duration-150"
             >
               View Full Archives 📜
@@ -486,7 +486,7 @@ export default function MonasteryDetail() {
                   <div key={event._id} className="rounded-lg cursor-pointer overflow-hidden border border-gray-200 hover:shadow-lg transition">
                     {event.images && event.images.length > 0 ? (
                       <div
-                        // onClick={() => router.push(`/events/${event._id}`)}
+                        onClick={() => router.push(`/events/${event._id}`)}
                         className="w-full h-40 bg-gray-200 overflow-hidden">
                         <img
                           src={event.images[0]}
