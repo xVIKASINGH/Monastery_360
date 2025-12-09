@@ -55,6 +55,7 @@ const Monastery360 = () => {
     { label: "Historical Archives", path: "/historical-archives" },
     { label: "Cultural Events & Festivals", path: "/cultural-events" },
     { label: "Sikkim", path: "/sikkim" },
+    {label:"Cultural Calendar",path:"/calendar"}
   ];
 
   const getDashboardRoute = (role: string | undefined) => {
@@ -211,6 +212,12 @@ const Monastery360 = () => {
           className="hover:text-yellow-400 transition cursor-pointer text-sm"
         >
           Explore Monastries
+        </button>
+         <button
+          onClick={() => handleNavigation("/local-transport")}
+          className="hover:text-yellow-400 transition cursor-pointer text-sm"
+        >
+          Local Transport
         </button>
         <button
           onClick={() => handleNavigation("/ai-planner")}
