@@ -65,7 +65,7 @@ const Models = () => {
             <span>3D Heritage Collection</span>
           </div>
           <h1 className="font-serif text-4xl md:text-6xl font-semibold text-foreground mb-6 tracking-tight">
-            Our Blender Models
+            Our 3D Models
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Meticulously crafted 3D models preserving the sacred architecture 

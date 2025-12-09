@@ -15,11 +15,17 @@ export interface IEvent extends Document {
   ticketPrice?: number;
   totaltickets?: number;
   bookedTickets: number;
+  userId:mongoose.Types.ObjectId;
 }
 const EventSchema = new Schema<IEvent>(
   {
     monasteryId: { type: Schema.Types.ObjectId, ref: "Monastery" },
-    eventName: String,
+    userId: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User",
+      required: true  // ← ADD THIS
+    },
+    eventName: { type: String, required: true },  // Also add required to critical fields
     startDate: String,
     endDate: String,
     time: String,
@@ -28,7 +34,7 @@ const EventSchema = new Schema<IEvent>(
     description: String,
     highlights: String,
     images: [String],
-    bookingAvailable: Boolean,
+    bookingAvailable: { type: Boolean, default: true },
     ticketPrice: Number,
     totaltickets: Number,
     bookedTickets: { type: Number, default: 0 },

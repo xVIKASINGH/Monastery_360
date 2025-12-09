@@ -1,85 +1,87 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse,NextRequest } from "next/server";
 import { uploadToCloudinary } from "@/lib/uploadCloudinary"; 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";// NOTE: Replace with your actual MongoDB model and connection logic
-// import EventModel from '@/models/EventModel'; 
+import { authOptions } from "@/lib/authOptions";
+import dbConnect from "@/lib/dbConnect";
 import eventsModel from "@/models/eventsModel";
 import User from "@/models/User";
-// --- Interface Definitions for API Consistency ---
-
-interface EventSchema {
-    _id: string; // MongoDB ID
-    monasteryId: string;
-    eventName: string;
-    startDate: string;
-    endDate: string;
-    time: string;
-    duration: string;
-    location: string;
-    description: string;
-    highlights: string;
-    images: string[]; // CORRECTED to match your model name
-    bookingAvailable: boolean;
-    ticketPrice: number;
-    totaltickets: number;
-    createdAt: Date;
-}
-
+import sgMail from "@sendgrid/mail";
 
 export async function POST(req: NextRequest) {
-     const session = await getServerSession(authOptions);
+    console.log("📌 [START] Event creation API hit");
+
+    await dbConnect();
+    console.log("🔗 DB Connected");
+
+    const session = await getServerSession(authOptions);
+    console.log("🧪 Session:", session?.user?.id ? "User authenticated" : "No session");
+
+    if (!session || !session.user?.id) {
+        console.log("❌ Authentication failed");
+        return NextResponse.json(
+            { success: false, message: "Not authenticated." },
+            { status: 401 }
+        );
+    }
+
     try {
+        console.log("📥 Extracting formData...");
         const formData = await req.formData();
 
-        // 2. Extract Fields and Files
-        const eventName = formData.get('eventName') as string;
-        const monasteryId = formData.get('monasteryId') as string;
-        const description = formData.get('description') as string;
-        const highlights = formData.get('highlights') as string;
-        const startDate = formData.get('startDate') as string;
-        const endDate = formData.get('endDate') as string;
-        const time = formData.get('time') as string;
-        const duration = formData.get('duration') as string;
-        const location = formData.get('location') as string;
-        
-        // Parsing non-string fields
-        const bookingAvailable = formData.get('bookingAvailable') === 'true'; 
-        const ticketPrice = parseFloat(formData.get('ticketPrice') as string) || 0;
-        const totaltickets = parseInt(formData.get('totaltickets') as string, 10) || 0;
+        const eventName = formData.get("eventName") as string;
+        const monasteryId = formData.get("monasteryId") as string;
+        const description = formData.get("description") as string;
+        const highlights = formData.get("highlights") as string;
+        const startDate = formData.get("startDate") as string;
+        const endDate = formData.get("endDate") as string;
+        const time = formData.get("time") as string;
+        const duration = formData.get("duration") as string;
+        const location = formData.get("location") as string;
+        const bookingAvailable = formData.get("bookingAvailable") === "true";
+        const ticketPrice = parseFloat(formData.get("ticketPrice") as string) || 0;
+        const totaltickets = parseInt(formData.get("totaltickets") as string, 10) || 0;
 
-        const imageFiles = formData.getAll('images') as File[];
+        console.log("📝 Parsed Form Data:", {
+            eventName,
+            monasteryId,
+            startDate,
+            endDate,
+            time,
+            duration,
+            location,
+            bookingAvailable,
+            ticketPrice,
+            totaltickets
+        });
+
+        const imageFiles = formData.getAll("images") as File[];
+        console.log(`🖼 Total images received: ${imageFiles.length}`);
 
         if (!monasteryId || !eventName || !startDate) {
-            return NextResponse.json({ success: false, message: "Missing required fields." }, { status: 400 });
+            console.log("⚠ Missing required fields");
+            return NextResponse.json(
+                { success: false, message: "Missing required fields." },
+                { status: 400 }
+            );
         }
-        
-        // 3. Upload Images to Cloudinary
-        console.log(`Uploading ${imageFiles.length} images to Cloudinary...`);
-        
-        const uploadPromises = imageFiles.map(file => uploadToCloudinary(file));
 
-        // Use Promise.allSettled to handle individual file upload failures gracefully
+        // ===== Uploading Images =====
+        console.log("📤 Uploading images to Cloudinary...");
+        const uploadPromises = imageFiles.map(file => uploadToCloudinary(file));
         const uploadResults = await Promise.allSettled(uploadPromises);
 
         const successfulUploads: string[] = [];
-        uploadResults.forEach((result, index) => {
-            if (result.status === 'fulfilled') {
-                successfulUploads.push(result.value);
+        uploadResults.forEach((res, i) => {
+            if (res.status === "fulfilled") {
+                console.log(`✅ Image ${i + 1} uploaded:`, res.value);
+                successfulUploads.push(res.value);
             } else {
-                console.error(`Upload failed for image ${index}:`, result.reason);
-                // Optionally handle the failure by sending a specific message back
+                console.log(`❌ Image ${i + 1} failed:`, res.reason);
             }
         });
-        
-        if (imageFiles.length > 0 && successfulUploads.length === 0) {
-            // If the user uploaded images but all uploads failed
-             return NextResponse.json({ success: false, message: "Image upload failed. Cannot create event." }, { status: 500 });
-        }
 
-        console.log(`Cloudinary upload complete. ${successfulUploads.length} URLs generated.`);
-
-        // 4. Prepare Event Data for DB
-        const eventDataToSave: Omit<EventSchema, '_id' | 'createdAt'> = {
+        // ===== Preparing Event Data =====
+        const eventDataToSave = {
             monasteryId,
             eventName,
             startDate,
@@ -89,34 +91,95 @@ export async function POST(req: NextRequest) {
             location,
             description,
             highlights,
-            images: successfulUploads, // CORRECTED FIELD NAME & Data type (Array of strings)
+            images: successfulUploads,
             bookingAvailable,
             ticketPrice,
             totaltickets,
+            userId: session.user.id,
         };
 
-        // 5. Save to Database
-        const savedEvent = await eventsModel.create(eventDataToSave); 
-        console.log("Event saved to DB with ID:", savedEvent);
-         await User.findByIdAndUpdate(
-  session?.user.id,
-  { $push: { bookings: savedEvent._id } },
-  { new: true }
-);
+        console.log("📦 Final Event Data:", eventDataToSave);
 
-        return NextResponse.json({ 
-            success: true, 
-            message: "Event created successfully.", 
-            event: savedEvent 
-        }, { status: 201 });
+        const savedEvent = await eventsModel.create(eventDataToSave);
+        console.log("🎉 Event saved:", savedEvent._id);
+
+        // Add to user's BookedEvents
+        console.log("📌 Adding event to user profile...");
+        await User.findByIdAndUpdate(
+            session.user.id,
+            { $push: { BookedEvents: savedEvent._id } },
+            { new: true }
+        );
+        console.log("👌 Updated user's booked events");
+
+        // ===== SendGrid Email Logic =====
+        console.log("📧 Preparing to send bulk emails...");
+
+        try {
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+            console.log("📨 SendGrid API Key added");
+
+            const hotelierUsers = await User.find({ type: 'hotelier' }, 'email').lean();
+            console.log(`🏨 Hoteliers found: ${hotelierUsers.length}`);
+
+            const recipientEmails = hotelierUsers.map(u => u.email).filter(Boolean);
+
+            if (recipientEmails.length > 0) {
+                console.log("📬 Emails to notify:", recipientEmails.length);
+
+                const monastery = await User.findById(monasteryId, 'name').lean(); 
+                const monasteryName = (monastery as any)?.name || 'A local Monastery';
+
+                console.log("🏯 Monastery:", monasteryName);
+
+                const eventDate = new Date(startDate).toLocaleDateString('en-IN', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                const eventDetailsUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${savedEvent._id}`;
+
+                const subject = `📢 Promotion Alert: New Event at ${monasteryName} on ${eventDate}`;
+                console.log("✉ Email Subject:", subject);
+
+                const htmlContent = `
+                    <div style="font-family: sans-serif; padding: 20px;">
+                        <h2>New Promotion Opportunity</h2>
+                        <p>Event: ${eventName}</p>
+                    </div>
+                `;
+
+                const bulkMessages = recipientEmails.map(email => ({
+                    to: email,
+                    from: process.env.SENDGRID_FROM_EMAIL!,
+                    subject,
+                    html: htmlContent,
+                    text: `New Event: ${eventName} on ${eventDate}. Details: ${eventDetailsUrl}`,
+                }));
+
+                await sgMail.send(bulkMessages);
+                console.log("🚀 Emails sent to hoteliers");
+
+            } else {
+                console.log("⚠ No hotelier emails found. Skipping email sending.");
+            }
+        } catch (emailErr) {
+            console.error("❌ Email sending error:", emailErr);
+        }
+
+        return NextResponse.json(
+            {
+                success: true,
+                message: "Event created successfully and hoteliers notified.",
+                event: savedEvent,
+            },
+            { status: 201 }
+        );
 
     } catch (error) {
-        console.error("API Error during event creation:", error);
-        // The ValidationError Mongoose is throwing originates from the data passed to it
-        // The fix above ensures the `images` field is always an array of strings.
-        return NextResponse.json({ 
-            success: false, 
-            message: "Internal server error. Check server logs for validation/upload details."
-        }, { status: 500 });
+        console.error("💥 API Error during event creation:", error);
+        return NextResponse.json(
+            { success: false, message: "Internal server error." },
+            { status: 500 }
+        );
     }
 }

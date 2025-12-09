@@ -4,7 +4,6 @@ import React, { useState, FormEvent, useCallback } from "react";
 import { X, Mail, Lock, User, Phone, Building2, Church } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-
 type AccountType = "user" | "hotelier" | "monasteryAdmin";
 type AuthMode = "login" | "signup";
 
@@ -12,6 +11,17 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   backgroundImagePath?: string;
+}
+
+interface LoginFormData {
+  email: string;
+  password: string;
+  accountType: AccountType;
+}
+
+interface SignupFormData extends LoginFormData {
+  username: string;
+  phone?: string;
 }
 
 export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalProps) {
@@ -31,7 +41,7 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
 
   const handleSuccess = useCallback(() => {
     onClose();
-    router.push("/");
+    router.push("/dashboard");
   }, [onClose, router]);
 
   const handleGoogleLogin = async () => {
@@ -155,9 +165,9 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
         return;
       }
 
-      if (user.type === "user") router.push("/");
-      else if (user.type === "hotelier") router.push("/hotel-admin");
-      else if (user.type === "monasteryAdmin") router.push("/monastery-admin");
+      if (user.type === "user") router.push("/dashboard/user");
+      else if (user.type === "hotelier") router.push("/dashboard/hotelier");
+      else if (user.type === "monasteryAdmin") router.push("/dashboard/monastery-admin");
       else router.push("/");
 
     } catch (err: unknown) {
@@ -203,9 +213,9 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
         className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col md:flex-row transform transition-all duration-300 scale-100 opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
-
+        
         {/* Left Side - Background Image */}
-        <div
+        <div 
           className="md:w-1/2 p-8 flex flex-col items-center justify-center relative bg-cover bg-center"
           style={{ backgroundImage: backgroundImagePath ? `url(${backgroundImagePath})` : undefined }}
         >
@@ -284,7 +294,7 @@ export function AuthModal({ isOpen, onClose, backgroundImagePath }: AuthModalPro
               {/* Email Input */}
               <div>
                 <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <div className="relative" onClick={(e) => e.stopPropagation()}> 
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     id="login-email"

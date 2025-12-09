@@ -6,6 +6,9 @@ import {
   Volume2,
   VolumeX,
   MapPin,
+  ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AuthModal } from "@/components/auth/AuthModal";
@@ -27,19 +30,19 @@ interface MonasteryType {
 
 const Monastery360 = () => {
   const router = useRouter();
-  // Auth modal state
   const [showAuthModal, setShowAuthModal] = useState(false);
-  // Video states
   const [currentVideo, setCurrentVideo] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
+  const [showExploreDropdown, setShowExploreDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showMobileExplore, setShowMobileExplore] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  // NEXTAUTH session
   const { data: session } = useSession();
-  // Avatar dropdown
   const [showDropdown, setShowDropdown] = useState(false);
+
   const monasteries = [
     { name: "Rumtek Monastery", location: "East Sikkim" },
     { name: "Pemayangtse Monastery", location: "West Sikkim" },
@@ -47,39 +50,13 @@ const Monastery360 = () => {
     { name: "Enchey Monastery", location: "Gangtok" },
     { name: "Dubdi Monastery", location: "Yuksom" },
   ];
-  const itineraries = [
-    {
-      days: "2 Days",
-      place: "Gangtok",
-      description: "Experience monasteries, MG Marg and Himalayan beauty.",
-      image: "https://res.cloudinary.com/djeospbqe/image/upload/v1764574482/mangan_s5gwva.webp",
-    },
-    {
-      days: "3 Days",
-      place: "Yuksom",
-      description: "Visit Dubdi Monastery & explore ancient trails.",
-      image: "https://res.cloudinary.com/djeospbqe/image/upload/v1764574481/gangtok_do46oy.webp",
-    },
-    {
-      days: "4 Days",
-      place: "Pelling",
-      description: "Explore Pemayangtse & Rabdentse ruins with stunning views.",
-      image: "https://res.cloudinary.com/djeospbqe/image/upload/v1764574481/namchi_h7b1bi.webp",
-    },
-    {
-      days: "5 Days",
-      place: "Ravangla",
-      description: "Breathtaking monasteries, Buddha Park & calm retreat.",
-      image: "https://res.cloudinary.com/djeospbqe/image/upload/v1764574481/Gyalshing_qrt0r7.webp",
-    },
-    {
-      days: "7 Days",
-      place: "North Sikkim",
-      description: "Lachen, Lachung, Gurudongmar & divine landscapes.",
-      image: "https://res.cloudinary.com/djeospbqe/image/upload/v1764574481/Pakyong_rnrgy8.webp",
-    },
+
+  const exploreLinks = [
+    { label: "Historical Archives", path: "/historical-archives" },
+    { label: "Cultural Events & Festivals", path: "/cultural-events" },
+    { label: "Sikkim", path: "/sikkim" },
   ];
-  // Function to get role-based dashboard route
+
   const getDashboardRoute = (role: string | undefined) => {
     switch (role?.toLowerCase()) {
       case "hotelier":
@@ -91,7 +68,7 @@ const Monastery360 = () => {
         return "/userprofile";
     }
   };
-  // Function to generate avatar from initials
+
   const getInitials = (name: string | undefined) => {
     if (!name) return "U";
     return name
@@ -101,7 +78,7 @@ const Monastery360 = () => {
       .toUpperCase()
       .slice(0, 2);
   };
-  // Function to generate a consistent color based on name
+
   const getAvatarColor = (name: string | undefined) => {
     const colors = [
       "bg-blue-500",
@@ -119,19 +96,25 @@ const Monastery360 = () => {
     return colors[hash % colors.length];
   };
 
-  // FETCH DATA ONLY ONCE
   const [monastery, setMonastery] = useState<MonasteryType[]>([]);
   useEffect(() => {
     async function fetchData() {
       const res = await fetch(`/api/monastries`);
       const data = await res.json();
       setMonastery(data);
-
     }
     fetchData();
   }, []);
 
-  // Handle scroll to show navbar
+  // Auto-change video every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentVideo((prev) => (prev + 1) % monasteries.length);
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [monasteries.length]);
+
   useEffect(() => {
     const handleScroll = () => {
       setShowSticky(window.scrollY > window.innerHeight * 0.8);
@@ -145,22 +128,22 @@ const Monastery360 = () => {
       if (video) {
         if (index === currentVideo) {
           const playPromise = video.play();
-          if (playPromise !== undefined) playPromise.catch(() => { });
+          if (playPromise !== undefined) playPromise.catch(() => {});
         } else {
           video.pause();
         }
         video.muted = isMuted;
       }
     });
-    // Play/pause audio based on mute state
     if (audioRef.current) {
       if (isMuted) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play().catch(() => { });
+        audioRef.current.play().catch(() => {});
       }
     }
   }, [currentVideo, isMuted]);
+
   const handleVideoChange = (dir: "next" | "prev") => {
     if (isTransitioning) return;
 
@@ -175,6 +158,7 @@ const Monastery360 = () => {
 
     setTimeout(() => setIsTransitioning(false), 800);
   };
+
   const toggleMute = () => {
     setIsMuted((prev) => {
       const newState = !prev;
@@ -182,18 +166,24 @@ const Monastery360 = () => {
         if (v) v.muted = newState;
       });
 
-      // Toggle audio
       if (audioRef.current) {
         if (newState) {
           audioRef.current.pause();
         } else {
-          audioRef.current.play().catch(() => { });
+          audioRef.current.play().catch(() => {});
         }
       }
 
       return newState;
     });
   };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setShowMobileMenu(false);
+    setShowMobileExplore(false);
+  };
+
   const currentMonastery = monasteries[currentVideo];
   const userRole = session?.user?.role || "user";
   const userName = session?.user?.name || "User";
@@ -201,36 +191,67 @@ const Monastery360 = () => {
   const initials = getInitials(userName);
   const avatarColor = getAvatarColor(userName);
 
-  // Navbar component (used both in hero and sticky)
+  // Desktop Navbar
   const NavbarContent = () => (
-    <div className="max-w-7xl mx-auto flex items-center justify-between">
-      {/* Logo */}
-      <div className="text-2xl font-bold tracking-wide">
+    <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8">
+      <div className="text-xl md:text-2xl font-bold tracking-wide">
         <span className="text-white">Monastery</span>
         <span className="text-yellow-400">360</span>
       </div>
 
       <div className="hidden md:flex items-center space-x-8">
-        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition cursor-pointer">
+        <button
+          onClick={() => handleNavigation("/model-list")}
+          className="hover:text-yellow-400 transition cursor-pointer text-sm"
+        >
           Model 360
-        </a>
-        <a onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition cursor-pointer">
+        </button>
+        <button
+          onClick={() => handleNavigation("/monasteries")}
+          className="hover:text-yellow-400 transition cursor-pointer text-sm"
+        >
           Explore Monastries
-        </a>
-        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
+        </button>
+        <button
+          onClick={() => handleNavigation("/ai-planner")}
+          className="hover:text-yellow-400 transition cursor-pointer text-sm"
+        >
           Plan Your Trip
-        </a>
-        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
-          Historical Archives
-        </a>
-        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">
-          Cultural events & festivals
-        </a>
-        <a onClick={() => router.push("/")} className="hover:text-yellow-400 transition  cursor-pointer">Sikkim</a>
-        {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
+        </button>
+
+        <div
+          className="relative"
+          onMouseEnter={() => setShowExploreDropdown(true)}
+          onMouseLeave={() => setShowExploreDropdown(false)}
+        >
+          <button className="flex items-center space-x-1 hover:text-yellow-400 transition text-sm">
+            <span>More</span>
+            <ChevronDown
+              size={18}
+              className={`transition-transform ${showExploreDropdown ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {showExploreDropdown && (
+            <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900 text-white rounded-lg shadow-xl py-2 z-50 border border-gray-700">
+              {exploreLinks.map((link) => (
+                <button
+                  key={link.path}
+                  onClick={() => {
+                    handleNavigation(link.path);
+                    setShowExploreDropdown(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-yellow-400 hover:text-black transition text-sm"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {session?.user ? (
           <div className="relative">
-            {/* Avatar with image or initials */}
             {userImage ? (
               <img
                 src={userImage}
@@ -240,7 +261,7 @@ const Monastery360 = () => {
               />
             ) : (
               <div
-                className={`w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400 flex items-center justify-center font-semibold text-white ${avatarColor}`}
+                className={`w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400 flex items-center justify-center font-semibold text-white text-sm ${avatarColor}`}
                 onClick={() => setShowDropdown((p) => !p)}
               >
                 {initials}
@@ -249,23 +270,23 @@ const Monastery360 = () => {
 
             {showDropdown && (
               <div className="absolute right-0 mt-3 w-48 bg-white text-black rounded-xl shadow-xl py-3 z-50">
-                <div className="px-4 py-2 font-semibold border-b">
+                <div className="px-4 py-2 font-semibold border-b text-sm">
                   {userName}
                 </div>
 
                 <button
                   onClick={() => {
-                    router.push(getDashboardRoute(userRole));
+                    handleNavigation(getDashboardRoute(userRole));
                     setShowDropdown(false);
                   }}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
                 >
                   Dashboard
                 </button>
 
                 <button
                   onClick={() => signOut()}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 text-sm"
                 >
                   Logout
                 </button>
@@ -273,21 +294,122 @@ const Monastery360 = () => {
             )}
           </div>
         ) : (
-          // 🔥 If NOT logged in → Show Get Started (opens login modal)
           <button
             onClick={() => setShowAuthModal(true)}
-            className="bg-yellow-400 text-black px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition"
+            className="bg-yellow-400 text-black px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition text-sm"
           >
             Get Started
           </button>
         )}
+      </div>
+
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        className="md:hidden text-white z-50"
+      >
+        {showMobileMenu ? <X size={28} /> : <Menu size={28} />}
+      </button>
+    </div>
+  );
+
+  // Mobile Menu
+  const MobileMenu = () => (
+    <div className="fixed inset-0 bg-black z-40 pt-20 md:hidden overflow-y-auto">
+      <div className="px-4 py-6 space-y-4">
+        <button
+          onClick={() => handleNavigation("/model-list")}
+          className="block w-full text-left py-3 border-b border-gray-700 hover:text-yellow-400 transition"
+        >
+          Model 360
+        </button>
+        <button
+          onClick={() => handleNavigation("/monasteries")}
+          className="block w-full text-left py-3 border-b border-gray-700 hover:text-yellow-400 transition"
+        >
+          Explore Monastries
+        </button>
+        <button
+          onClick={() => handleNavigation("/ai-planner")}
+          className="block w-full text-left py-3 border-b border-gray-700 hover:text-yellow-400 transition"
+        >
+          Plan Your Trip
+        </button>
+
+        <button
+          onClick={() => setShowMobileExplore(!showMobileExplore)}
+          className="flex items-center justify-between w-full py-3 border-b border-gray-700 hover:text-yellow-400 transition"
+        >
+          <span>More</span>
+          <ChevronDown
+            size={18}
+            className={`transition-transform ${showMobileExplore ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {showMobileExplore && (
+          <div className="pl-4 space-y-2 border-b border-gray-700 pb-4">
+            {exploreLinks.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => handleNavigation(link.path)}
+                className="block w-full text-left py-2 hover:text-yellow-400 transition text-sm"
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="pt-4 border-t border-gray-700">
+          {session?.user ? (
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 py-2">
+                {userImage ? (
+                  <img
+                    src={userImage}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full border-2 border-yellow-400"
+                  />
+                ) : (
+                  <div
+                    className={`w-10 h-10 rounded-full border-2 border-yellow-400 flex items-center justify-center font-semibold text-white text-sm ${avatarColor}`}
+                  >
+                    {initials}
+                  </div>
+                )}
+                <span className="text-sm font-semibold">{userName}</span>
+              </div>
+              <button
+                onClick={() => {
+                  handleNavigation(getDashboardRoute(userRole));
+                }}
+                className="block w-full text-left py-2 hover:text-yellow-400 transition text-sm"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => signOut()}
+                className="block w-full text-left py-2 hover:text-red-400 transition text-sm text-red-600"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="w-full bg-yellow-400 text-black px-4 py-3 rounded-full font-semibold hover:bg-yellow-500 transition"
+            >
+              Get Started
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 
   return (
     <div className="w-full min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Auth Modal */}
       {showAuthModal && (
         <AuthModal
           isOpen={showAuthModal}
@@ -295,7 +417,7 @@ const Monastery360 = () => {
           backgroundImagePath="/images/sikkimHe.avif"
         />
       )}
-      {/* Background Audio */}
+
       <audio
         ref={audioRef}
         loop
@@ -305,22 +427,19 @@ const Monastery360 = () => {
         <source src="/audio/landingpage_audiotape.mpeg" type="audio/mpeg" />
       </audio>
 
-      {/* STICKY NAVBAR - Shows on scroll */}
       {showSticky && (
-        <nav className="fixed top-0 left-0 right-0 z-40 px-8 py-4 bg-black border-b border-gray-800 transition-all duration-300">
+        <nav className="fixed top-0 left-0 right-0 z-40 py-4 bg-black border-b border-gray-800 transition-all duration-300">
           <NavbarContent />
         </nav>
       )}
 
-      {/* Background Videos */}
       <div className="relative h-screen w-full overflow-hidden">
         {monasteries.map((monastery, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-700 ease-in-out ${index === currentVideo
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-105"
-              }`}
+            className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+              index === currentVideo ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            }`}
           >
             <video
               ref={(el) => {
@@ -340,150 +459,74 @@ const Monastery360 = () => {
           </div>
         ))}
 
-        {/* NAVBAR - Only on hero section */}
-        <nav className="absolute top-0 left-0 right-0 z-30 px-8 py-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Logo */}
-            <div className="text-2xl font-bold tracking-wide">
-              <span className="text-white">Monastery</span>
-              <span className="text-yellow-400">360</span>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-8">
-              <a onClick={() => router.push("/art-gallery")} className="hover:text-yellow-400 transition cursor-pointer">
-                Art Gallery
-              </a>
-              <a onClick={() => router.push("/monasteries")} className="hover:text-yellow-400 transition cursor-pointer">
-                Explore Monastries
-              </a>
-              <a onClick={() => router.push("/ai-planner")} className="hover:text-yellow-400 transition  cursor-pointer">
-                Plan Your Trip
-              </a>
-              <a onClick={() => router.push("/historical-archives")} className="hover:text-yellow-400 transition  cursor-pointer">
-                Historical Archives
-              </a>
-              <a onClick={() => router.push("/events")} className="hover:text-yellow-400 transition  cursor-pointer">
-                Cultural events & festivals
-              </a>
-              <a onClick={() => router.push("/sikkim-map")} className="hover:text-yellow-400 transition  cursor-pointer">Sikkim</a>
-              {/* 🔥 IF LOGGED IN → SHOW AVATAR */}
-              {session?.user ? (
-                <div className="relative">
-                  {/* Avatar with image or initials */}
-                  {userImage ? (
-                    <img
-                      src={userImage}
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400"
-                      onClick={() => setShowDropdown((p) => !p)}
-                    />
-                  ) : (
-                    <div
-                      className={`w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-400 flex items-center justify-center font-semibold text-white ${avatarColor}`}
-                      onClick={() => setShowDropdown((p) => !p)}
-                    >
-                      {initials}
-                    </div>
-                  )}
-
-                  {showDropdown && (
-                    <div className="absolute right-0 mt-3 w-48 bg-white text-black rounded-xl shadow-xl py-3 z-50">
-                      <div className="px-4 py-2 font-semibold border-b">
-                        {userName}
-                      </div>
-                      <button
-                        onClick={() => {
-                          router.push(getDashboardRoute(userRole));
-                          setShowDropdown(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                      >
-                        Dashboard
-                      </button>
-                      <button
-                        onClick={() => signOut()}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // 🔥 If NOT logged in → Show Get Started (opens login modal)
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="bg-yellow-400 text-black px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition"
-                >
-                  Get Started
-                </button>
-              )}
-            </div>
-          </div>
+        <nav className="absolute top-0 left-0 right-0 z-30 py-4 md:py-6">
+          <NavbarContent />
         </nav>
 
-        {/* Center Text */}
         <div className="absolute inset-0 z-20 flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
-            <p className="text-yellow-400 text-lg md:text-xl mb-4 tracking-widest uppercase">
+            <p className="text-yellow-400 text-sm md:text-lg lg:text-xl mb-3 md:mb-4 tracking-widest uppercase">
               Step into the allure of Sikkim&apos;s
             </p>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-serif italic mb-4 md:mb-6">
               Incredible Wonders
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto px-2">
               Explore over 200 ancient monasteries through immersive 360° virtual
               experiences.
             </p>
           </div>
         </div>
 
-        <Monastery360Chatbot/>
+        <Monastery360Chatbot />
 
-        {/* Bottom Info */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 pb-12 px-8">
-          <div className="max-w-7xl mx-auto flex justify-between items-end">
-            <div className="flex flex-col">
-              <div className="text-4xl md:text-5xl font-bold text-yellow-400">
-                {currentMonastery.name}
+        {showMobileMenu && <MobileMenu />}
+
+        <div className="absolute bottom-0 left-0 right-0 z-30 pb-6 md:pb-12 px-4 md:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
+              <div className="flex flex-col">
+                <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-yellow-400">
+                  {currentMonastery.name}
+                </div>
+                <div className="text-base md:text-lg lg:text-xl font-light text-white opacity-80 mt-2">
+                  <MapPin className="inline w-4 h-4 md:w-5 md:h-5 mr-2" />
+                  {currentMonastery.location}
+                </div>
               </div>
-              <div className="text-lg md:text-xl font-light text-white opacity-80">
-                <MapPin className="inline w-5 h-5 mr-2" />
-                {currentMonastery.location}
+
+              <div className="flex gap-3 md:gap-4 w-full md:w-auto">
+                <button
+                  onClick={toggleMute}
+                  className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-full hover:bg-white/30 transition flex-1 md:flex-none"
+                >
+                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+
+                <button
+                  onClick={() => handleVideoChange("prev")}
+                  disabled={isTransitioning}
+                  className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-full hover:bg-white/30 transition flex-1 md:flex-none"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                <button
+                  onClick={() => handleVideoChange("next")}
+                  disabled={isTransitioning}
+                  className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-full hover:bg-white/30 transition flex-1 md:flex-none"
+                >
+                  <ChevronRight size={20} />
+                </button>
               </div>
-            </div>
-
-            <button
-              onClick={toggleMute}
-              className="bg-white/20 backdrop-blur-sm p-4 rounded-full hover:bg-white/30 transition"
-            >
-              {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-            </button>
-
-            <div className="flex space-x-4">
-              <button
-                onClick={() => handleVideoChange("prev")}
-                disabled={isTransitioning}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-full hover:bg-white/30 transition"
-              >
-                <ChevronLeft size={28} />
-              </button>
-
-              <button
-                onClick={() => handleVideoChange("next")}
-                disabled={isTransitioning}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-full hover:bg-white/30 transition"
-              >
-                <ChevronRight size={28} />
-              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <FeaturedMonasteries/>
-      <CuratedItineraries/>
-      <DownloadAppSection/>
+      <FeaturedMonasteries />
+      <CuratedItineraries />
+      <DownloadAppSection />
       <Footer />
     </div>
   );

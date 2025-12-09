@@ -570,7 +570,7 @@ export default function MonasteryDetail() {
                 </div>
 
                 <button
-                  // onClick={handlePayment}
+                  onClick={handlePayment}
                   disabled={paymentLoading}
                   className="w-full bg-yellow-400 text-white py-3 rounded-lg font-semibold hover:bg-yellow-400 transition mb-4 disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from "react";
-import { MapPin, Calendar, Users, Filter, Loader2, ChevronRight, Check, AlertCircle, ArrowLeft, Download } from "lucide-react";
+import { MapPin, Loader2, ChevronRight, Check, AlertCircle, ArrowLeft, Download } from "lucide-react";
 
 
 interface Activity {
@@ -115,15 +115,15 @@ export default function TripPlannerPage() {
       {step === "input" ? (
         <div className="min-h-screen">
           <div className="border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
-              <h1 className="text-3xl font-bold text-gray-900">Plan Your Trip</h1>
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+              <h1 className="text-4xl font-bold text-gray-900">Plan Your Trip</h1>
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
-            <div className="space-y-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+            <div className="max-w-2xl space-y-12">
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   Where do you want to explore?
                 </label>
                 <input
@@ -132,7 +132,7 @@ export default function TripPlannerPage() {
                   placeholder="Select a district"
                   value={formData.district}
                   onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                  className="w-full md:w-96 px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-white"
                 />
                 <datalist id="districts">
                   {DISTRICTS.map((d) => (
@@ -145,19 +145,19 @@ export default function TripPlannerPage() {
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   How many days?
                 </label>
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex gap-2 flex-wrap">
                   {DAYS_OPTIONS.map((day) => (
                     <button
                       key={day}
                       type="button"
                       onClick={() => setFormData({ ...formData, days: day })}
-                      className={`px-4 py-3 rounded-lg font-semibold transition ${
+                      className={`px-6 py-3 rounded-lg font-medium transition ${
                         formData.days === day
-                          ? "bg-black text-white"
-                          : "bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300"
+                          ? "bg-yellow-400 text-gray-900"
+                          : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                       }`}
                     >
                       {day}
@@ -167,10 +167,10 @@ export default function TripPlannerPage() {
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   Who are you traveling with?
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {TRAVELER_TYPES.map((type) => (
                     <button
                       key={type}
@@ -181,10 +181,10 @@ export default function TripPlannerPage() {
                           travellerType: type.toLowerCase(),
                         })
                       }
-                      className={`px-4 py-3 rounded-lg font-semibold transition ${
+                      className={`px-6 py-3 rounded-lg font-medium transition ${
                         formData.travellerType === type.toLowerCase()
-                          ? "bg-black text-white"
-                          : "bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300"
+                          ? "bg-yellow-400 text-gray-900"
+                          : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                       }`}
                     >
                       {type}
@@ -194,19 +194,19 @@ export default function TripPlannerPage() {
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   What interests you?
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {AVAILABLE_FILTERS.map((filter) => (
                     <button
                       key={filter.id}
                       type="button"
                       onClick={() => handleFilterToggle(filter.id)}
-                      className={`px-4 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
+                      className={`px-4 py-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 ${
                         formData.filters.includes(filter.id)
-                          ? "bg-black text-white"
-                          : "bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300"
+                          ? "bg-yellow-400 text-gray-900"
+                          : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                       }`}
                     >
                       {formData.filters.includes(filter.id) && (
@@ -219,7 +219,7 @@ export default function TripPlannerPage() {
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   Any special requests?
                 </label>
                 <textarea
@@ -228,12 +228,12 @@ export default function TripPlannerPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, customNotes: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none h-24"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none h-20 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-900 mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
                   Preferred Language
                 </label>
                 <select
@@ -241,7 +241,7 @@ export default function TripPlannerPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, language: e.target.value })
                   }
-                  className="w-full md:w-96 px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-white"
                 >
                   <option value="en">English</option>
                   <option value="hi">Hindi</option>
@@ -252,14 +252,14 @@ export default function TripPlannerPage() {
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-red-800 text-sm">{error}</p>
+                  <p className="text-red-700 text-sm">{error}</p>
                 </div>
               )}
 
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="bg-black hover:bg-gray-900 disabled:bg-gray-500 text-white font-bold py-4 px-8 rounded-lg transition flex items-center justify-center gap-3 w-full md:w-auto"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-400 text-gray-900 font-semibold py-4 px-8 rounded-lg transition flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -316,10 +316,8 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
 
     setTimeout(() => {
       try {
-        // Create a new window for printing
         const printWindow = window.open('', '', 'width=800,height=600');
         if (!printWindow || !pdfRef.current) return;
-        const htmlContent = pdfRef.current.innerHTML;
 
         printWindow.document.write(`
           <!DOCTYPE html>
@@ -329,26 +327,24 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
             <style>
               * { margin: 0; padding: 0; box-sizing: border-box; }
               body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; background: white; }
-              .header { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white; padding: 40px; margin-bottom: 30px; }
-              .header h1 { font-size: 32px; margin-bottom: 10px; }
-              .header p { font-size: 16px; opacity: 0.9; }
-              .section { margin-bottom: 40px; padding: 0 40px; }
-              .section h2 { font-size: 24px; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-              .timeline { display: flex; justify-content: space-between; margin: 30px 0; position: relative; padding: 0 40px; }
-              .timeline-item { flex: 1; text-align: center; }
-              .timeline-dot { width: 30px; height: 30px; background: black; border-radius: 50%; margin: 0 auto 10px; }
-              .timeline-label { font-size: 12px; font-weight: 600; color: #666; }
-              .activity { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
-              .activity-time { font-size: 12px; font-weight: 600; color: #666; }
-              .activity-title { font-size: 18px; font-weight: bold; margin: 8px 0; }
-              .activity-details { font-size: 14px; color: #666; margin: 8px 0; line-height: 1.5; }
-              .activity-transport { font-size: 12px; color: #666; margin-top: 8px; }
+              .header { background: white; padding: 40px; margin-bottom: 40px; border-bottom: 1px solid #e5e5e5; }
+              .header h1 { font-size: 36px; margin-bottom: 10px; font-weight: 600; }
+              .header p { font-size: 16px; color: #666; }
+              .section { margin-bottom: 50px; padding: 0 40px; }
+              .section h2 { font-size: 28px; font-weight: 600; margin-bottom: 25px; color: #1a1a1a; }
+              .day-section { margin-bottom: 35px; }
+              .day-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; color: #1a1a1a; }
+              .activity { background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+              .activity-time { font-size: 13px; color: #666; font-weight: 500; }
+              .activity-title { font-size: 18px; font-weight: 600; margin: 8px 0; color: #1a1a1a; }
+              .activity-details { font-size: 14px; color: #666; margin: 8px 0; line-height: 1.6; }
+              .activity-transport { font-size: 13px; color: #666; margin-top: 8px; }
               .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-              .tip-box { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; font-size: 13px; line-height: 1.6; }
-              .budget-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-              .budget-card { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; }
-              .budget-label { font-size: 14px; font-weight: 600; color: #666; margin-bottom: 10px; }
-              .budget-value { font-size: 24px; font-weight: bold; color: black; }
+              .tip-box { background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 18px; font-size: 14px; line-height: 1.6; }
+              .budget-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+              .budget-card { background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 25px; text-align: center; }
+              .budget-label { font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500; }
+              .budget-value { font-size: 28px; font-weight: 600; color: #1a1a1a; }
               .page-break { page-break-after: always; }
               @media print { body { margin: 0; padding: 0; } }
             </style>
@@ -361,9 +357,9 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
 
             <div class="section">
               <h2>Your Itinerary</h2>
-              ${Object.entries(dayWise).map(([day, activities], idx) => `
-                <div style="margin-bottom: 30px;">
-                  <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">${day}</h3>
+              ${Object.entries(dayWise).map(([day, activities]) => `
+                <div class="day-section">
+                  <div class="day-title">${day}</div>
                   ${activities.map(activity => `
                     <div class="activity">
                       <div class="activity-time">${activity.time}</div>
@@ -423,10 +419,10 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
   return (
     <div className="min-h-screen bg-white">
       <div className="border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
           <button
             onClick={onReset}
-            className="text-gray-600 hover:text-black flex items-center gap-2 mb-6 transition"
+            className="text-gray-600 hover:text-gray-900 flex items-center gap-2 mb-4 transition"
           >
             <ArrowLeft className="w-5 h-5" />
             Back
@@ -434,7 +430,7 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
           <h1 className="text-4xl font-bold text-gray-900">
             Your {formData.days}-Day {formData.district} Journey
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 text-lg mt-2">
             {formData.travellerType.charAt(0).toUpperCase() + formData.travellerType.slice(1)} • {formData.startingPoint}
           </p>
         </div>
@@ -446,10 +442,10 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 font-semibold transition ${
+              className={`pb-4 font-semibold text-lg transition ${
                 activeTab === tab
-                  ? "text-black border-b-2 border-black"
-                  : "text-gray-600 hover:text-black"
+                  ? "text-gray-900 border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -457,45 +453,45 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
           ))}
         </div>
 
-        <div ref={pdfRef} className="bg-white pb-12 print-content">
+        <div ref={pdfRef} className="bg-white pb-12">
           {activeTab === "itinerary" && (
             <div className="space-y-8">
               <div className="mb-12">
                 <div className="flex items-center gap-0 relative">
-                  <div className="absolute top-5 left-0 right-0 h-1 bg-gray-300 -z-10" />
+                  <div className="absolute top-5 left-0 right-0 h-px bg-gray-300 -z-10" />
                   {dayKeys.map((day, idx) => (
                     <div key={day} className="flex-1 flex flex-col items-center">
                       <button
                         onClick={() => setActiveDay(day)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition mb-2 ${
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition mb-2 ${
                           activeDay === day
-                            ? "bg-black text-white"
-                            : "bg-white border-2 border-gray-300 text-gray-600 hover:border-black"
+                            ? "bg-yellow-400 text-gray-900"
+                            : "bg-white border border-gray-300 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
                         {idx + 1}
                       </button>
-                      <span className="text-xs text-gray-600 font-medium">{day}</span>
+                      <span className="text-xs text-gray-600">{day}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-gray-900">{activeDay}</h2>
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold text-gray-900">{activeDay}</h2>
                 {currentDay.map((activity, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition">
+                  <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-sm transition">
                     <div className="flex gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <Clock className="w-6 h-6 text-gray-600" />
+                        <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center">
+                          <Clock className="w-6 h-6 text-gray-900" />
                         </div>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-gray-600">{activity.time}</p>
-                        <h3 className="text-lg font-bold text-gray-900 mt-1">{activity.activity}</h3>
+                        <p className="text-sm text-gray-600 font-medium">{activity.time}</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mt-1">{activity.activity}</h3>
                         <p className="text-gray-600 text-sm mt-2">{activity.details}</p>
-                        <div className="mt-3 flex items-center gap-2 text-xs text-gray-600">
+                        <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
                           <MapPin className="w-4 h-4" />
                           {activity.transport}
                         </div>
@@ -509,7 +505,7 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
 
           {activeTab === "tips" && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Travel Tips</h2>
+              <h2 className="text-2xl font-semibold text-gray-900">Travel Tips</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {travelTips.map((tip, index) => (
                   <div key={index} className="border border-gray-200 rounded-lg p-6">
@@ -522,16 +518,16 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
 
           {activeTab === "budget" && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Estimated Budget</h2>
+              <h2 className="text-2xl font-semibold text-gray-900">Estimated Budget</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                   { label: "Budget", value: budget.low },
                   { label: "Comfort", value: budget.medium },
                   { label: "Premium", value: budget.high },
                 ].map((tier, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-8 text-center hover:shadow-md transition">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">{tier.label}</h3>
-                    <p className="text-3xl font-bold text-black">{tier.value}</p>
+                  <div key={index} className="border border-gray-200 rounded-lg p-8 text-center hover:shadow-sm transition">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">{tier.label}</h3>
+                    <p className="text-3xl font-semibold text-gray-900">{tier.value}</p>
                   </div>
                 ))}
               </div>
@@ -539,7 +535,6 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
           )}
         </div>
 
-        {/* Download Section */}
         <div className="mt-12 border-t border-gray-200 pt-8">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 flex items-center justify-between">
             <div>
@@ -549,7 +544,7 @@ function TripResultView({ response, formData, onReset }: TripResultViewProps) {
             <button
               onClick={generatePDF}
               disabled={downloading}
-              className="flex items-center gap-2 bg-black hover:bg-gray-900 disabled:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition"
+              className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-400 text-gray-900 font-semibold py-3 px-6 rounded-lg transition"
             >
               {downloading ? (
                 <>
