@@ -35,7 +35,7 @@ interface LocalServiceExtended {
   notes?: string;
 }
 
-export const allServices: LocalServiceExtended[] = [
+const allServices: LocalServiceExtended[] = [
   // -------------------------------
   // SIKKIM — Transport Services
   // -------------------------------

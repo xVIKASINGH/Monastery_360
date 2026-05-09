@@ -53,8 +53,8 @@ const Monastery360 = () => {
 
   const exploreLinks = [
     { label: "Historical Archives", path: "/historical-archives" },
-    { label: "Cultural Events & Festivals", path: "/cultural-events" },
-    { label: "Sikkim", path: "/sikkim" },
+    { label: "Cultural Events & Festivals", path: "/events" },
+    { label: "Sikkim", path: "/sikkim-map" },
     {label:"Cultural Calendar",path:"/calendar"}
   ];
 

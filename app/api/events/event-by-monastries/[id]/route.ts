@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import eventsModel from "@/models/eventsModel";
+import Monastery from "@/models/monasteriesModel";
 import dbConnect from "@/lib/dbConnect";
+import mongoose from "mongoose";
 
 export async function GET(req: Request, context: any) {
   try {
@@ -18,7 +20,27 @@ export async function GET(req: Request, context: any) {
       );
     }
 
-    const events = await eventsModel.find({ monasteryId }).lean();
+    // Resolve the actual MongoDB _id if a slug/name was passed
+    let resolvedId = monasteryId;
+
+    if (!mongoose.Types.ObjectId.isValid(monasteryId)) {
+      // Try finding by numeric id or name slug
+      let monastery = null;
+      const numericId = Number(monasteryId);
+      if (!isNaN(numericId)) {
+        monastery = await Monastery.findOne({ id: numericId });
+      }
+      if (!monastery) {
+        monastery = await Monastery.findOne({
+          name: { $regex: new RegExp(monasteryId, "i") },
+        });
+      }
+      if (monastery) {
+        resolvedId = monastery._id.toString();
+      }
+    }
+
+    const events = await eventsModel.find({ monasteryId: resolvedId }).lean();
     return NextResponse.json(
       {
         success: true,

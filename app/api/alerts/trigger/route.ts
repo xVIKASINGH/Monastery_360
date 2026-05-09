@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
 import sgMail from "@sendgrid/mail";
-import { getCurrentTimeInIST } from "@/lib/utils"; // Assuming a utility function for time formatting
+// getCurrentTimeInIST is handled inline via toLocaleTimeString
 
 // Define the expected body structure from the frontend
 interface AlertRequestBody {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     // NOTE: Corrected authorization check. Assuming role is stored as 'userType' or 'role' in session/DB.
     // If your Mongoose User model uses 'userType' as per previous discussion, adjust accordingly.
     // Using a placeholder 'monasteryAdmin' check here. You might need to refine this based on your User model structure.
-    const isAdmin = session?.user?.role === 'monasteryAdmin' || session?.user?.userType === 'monasteryAdmin';
+    const isAdmin = session?.user?.role === 'monasteryAdmin';
     
     console.log("🧪 Session:", session?.user?.id ? "User authenticated" : "No session");
     console.log("🔑 Is Admin:", isAdmin);
